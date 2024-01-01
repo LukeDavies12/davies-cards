@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id           String    @id @unique
+  id String @id @unique
 
   auth_session Session[]
   key          Key[]
@@ -34,4 +34,30 @@ model Key {
   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
+}
+
+model Game {
+  id               String        @id @unique
+  type             GameType      @relation(fields: [gameTypeId], references: [id])
+  participants     Participant[]
+  winnerId         Participant @relation(fields: [participantId], references: [id])
+  winnerScore      Int?
+  secondPlaceId    String?
+  secondPlaceScore Int?
+  thirdPlaceId     String?
+  thirdPlaceScore  Int?
+  gameTypeId       Int
+}
+
+model Participant {
+  id     String  @id @unique
+  name   String
+  Game   Game?   @relation(fields: [gameId], references: [id])
+  gameId String?
+}
+
+model GameType {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  Game Game[]
 }
