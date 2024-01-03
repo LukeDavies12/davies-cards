@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -37,23 +34,29 @@ model Key {
 }
 
 model Game {
-  id               String        @id @unique
-  type             GameType      @relation(fields: [gameTypeId], references: [id])
-  participants     Participant[]
-  winnerId         Participant @relation(fields: [participantId], references: [id])
-  winnerScore      Int?
-  secondPlaceId    String?
-  secondPlaceScore Int?
-  thirdPlaceId     String?
-  thirdPlaceScore  Int?
+  id               Int @id @default(autoincrement())
+  date             DateTime
+  participants     Participant[] @relation(name: "GameParticipants")
+  winner           Participant   @relation(name: "GameWinner", fields: [winnerId], references: [id])
+  winnerScore      Int
+  secondPlace      Participant   @relation(name: "GameSecondPlace", fields: [secondPlaceId], references: [id])
+  secondPlaceScore Int
+  thirdPlace       Participant   @relation(name: "GameThirdPlace", fields: [thirdPlaceId], references: [id])
+  thirdPlaceScore  Int
   gameTypeId       Int
+  winnerId         Int
+  secondPlaceId    Int
+  thirdPlaceId     Int
+  type             GameType      @relation(fields: [gameTypeId], references: [id])
 }
 
 model Participant {
-  id     String  @id @unique
+  id     Int  @id @default(autoincrement())
   name   String
-  Game   Game?   @relation(fields: [gameId], references: [id])
-  gameId String?
+  games  Game[]  @relation(name: "GameParticipants")
+  gamesWon Game[] @relation(name: "GameWinner")
+  gamesSecondPlace Game[] @relation(name: "GameSecondPlace")
+  gamesThirdPlace Game[] @relation(name: "GameThirdPlace")
 }
 
 model GameType {
