@@ -25,8 +25,7 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-lg"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
         >
           Games Won
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -41,8 +40,7 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-lg"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
         >
           Games Played
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -56,8 +54,8 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-lg italic"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
+          className="italic font-bold"
         >
           Win %
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -71,8 +69,7 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-lg"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
         >
           Points
           <ArrowUpDown className="ml-2 h-4 w-4" />

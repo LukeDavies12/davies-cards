@@ -1,40 +1,63 @@
 "use client"
 
-import { Input } from "@/components/ui/input"
-import { ColumnDef, flexRender, getFilteredRowModel, ColumnFiltersState, getCoreRowModel, useReactTable, SortingState, getSortedRowModel, FilterFn, Row, filterFns } from "@tanstack/react-table";
+import { ColumnDef, flexRender, getFilteredRowModel, ColumnFiltersState, getCoreRowModel, useReactTable, SortingState, getSortedRowModel, FilterFn } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import React from "react"
 import { Button } from "@/components/ui/button";
 import { ParticipantWithStats } from "./columns";
+import { Input } from "@/components/ui/input";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-const greaterThanFilter: FilterFn<ParticipantWithStats> = (row, columnId, filterValue) => {
-  const cellValue = row.getValue(columnId) as number; // Assuming the cell value is a number
-  const filterNumber = Number(filterValue);
-  return cellValue >= filterNumber;
-};
-
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: 'percentageWon', desc: true }
+  ]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [filteredData, setFilteredData] = React.useState<TData[]>(data);
+  const [minGamesPlayed, setMinGamesPlayed] = React.useState('');
 
-  const handleSetFilter = (value: number) => {
-    setColumnFilters([{ id: 'gamesPlayed', value }])
+  const handleMinGamesPlayedChange = (value: string) => {
+    setMinGamesPlayed(value);
+    if (value === '') {
+      // If the input is empty, remove the filter
+      setColumnFilters(old => old.filter(filter => filter.id !== 'gamesPlayed'));
+    } else {
+      // Otherwise, parse the value and set the filter
+      const numericValue = parseInt(value, 10);
+      setColumnFilters([{ id: 'gamesPlayed', value: numericValue }]);
+    }
+  };
+
+  const greaterThanFilter: FilterFn<ParticipantWithStats> = (row, columnId, filterValue) => {
+    const cellValue = row.getValue(columnId) as number; // Assuming the cell value is a number
+    const filterNumber = Number(filterValue);
+    return cellValue >= filterNumber;
   };
 
   const handleResetFilters = () => {
-    setColumnFilters([])
+    setColumnFilters([]);
+    setSorting([
+      { id: 'percentageWon', desc: true }
+    ]);
+    setFilteredData(data); // Reset the filtered data to the original data
+    setMinGamesPlayed('');
   }
 
+  const rankColumn: ColumnDef<TData, TValue> = {
+    id: 'rank',
+    header: 'Win % Rank',
+    cell: (info) => <span>{info.row.index + 1}</span>,
+  };
+
+  const columnsWithRank: ColumnDef<TData, TValue>[] = [rankColumn, ...columns];
+
   const table = useReactTable({
-    data,
-    columns,
+    data: filteredData,
+    columns: columnsWithRank,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -48,17 +71,29 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       'greaterThan': greaterThanFilter,
     },
   });
-  
+
+  React.useEffect(() => {
+    if (columnFilters.length > 0) {
+      setFilteredData(table.getRowModel().rows.map(row => row.original));
+    } else {
+      setFilteredData(data); // Reset to original data when filters are cleared
+    }
+  }, [columnFilters, data, table]);
 
   return (
     <div>
-      <div className="flex items-center mb-6 gap-2">
-        <Button onClick={() => handleSetFilter(5)}>5+ Games Played</Button>
-        <Button onClick={() => handleSetFilter(10)}>10+ Games Played</Button>
-        <Button variant={"outline"} onClick={handleResetFilters}>Reset Filters</Button>
+      <div className="flex items-center mb-6 justify-between">
+        <Input
+          type="number"
+          className="max-w-sm"
+          value={minGamesPlayed}
+          onChange={(e) => handleMinGamesPlayedChange(e.target.value)}
+          placeholder="Filter for Min. Games Played"
+        />
+        <Button variant={"outline"} onClick={handleResetFilters}>Reset Table</Button>
       </div>
       <div className="rounded-md border">
-        <Table className="text-lg">
+        <Table className="">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -99,3 +134,4 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     </div>
   );
 }
+

@@ -13,14 +13,12 @@ async function getParticipants() {
     },
   });
 
-  const participantsWithStats = participants.map((participant) => {
+  let participantsWithStats: ParticipantWithStats[] = participants.map((participant) => {
     const gamesWon = participant.gamesWon.length;
     const gamesSecondPlace = participant.gamesSecondPlace.length;
     const gamesThirdPlace = participant.gamesThirdPlace.length;
-
     const totalPoints = gamesWon * 5 + gamesSecondPlace * 3 + gamesThirdPlace;
-
-    const percentageWon = gamesWon / participant.games.length * 100;
+    const percentageWon = (gamesWon / participant.games.length) * 100;
     const formattedPercentageWon = percentageWon ? percentageWon.toFixed(1) + '%' : '0%';
 
     return {
@@ -34,8 +32,15 @@ async function getParticipants() {
     };
   });
 
-  return participantsWithStats.sort((a, b) => b.totalPoints - a.totalPoints || parseFloat(b.percentageWon) - parseFloat(a.percentageWon));
+  // Sort participants by win percentage in descending order and assign rank/place
+  participantsWithStats = participantsWithStats.sort((a, b) => parseFloat(b.percentageWon) - parseFloat(a.percentageWon))
+    .map((participant, index) => ({
+      ...participant,
+    }));
+
+  return participantsWithStats;
 }
+
 
 export default async function Home() {
   const data = await getParticipants();
