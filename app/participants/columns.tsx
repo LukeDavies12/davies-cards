@@ -34,6 +34,34 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
     },
   },
   {
+    accessorKey: "gamesSecondPlace",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
+        >
+          Games 2nd Place
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    accessorKey: "gamesThirdPlace",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
+        >
+          Games 3rd Place
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
     accessorKey: "gamesPlayed",
     filterFn: 'greaterThan' as FilterFnOption<ParticipantWithStats>,
     header: ({ column }) => {
@@ -55,7 +83,7 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
-          className="italic font-bold"
+          className="italic font-medium"
         >
           Win %
           <ArrowUpDown className="ml-2 h-4 w-4" />
