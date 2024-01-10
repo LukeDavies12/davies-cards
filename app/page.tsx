@@ -7,22 +7,34 @@ async function getParticipants() {
   const participants = await prisma.participant.findMany({
     include: {
       games: true,
+      gamesWon: true,
+      gamesSecondPlace: true,
+      gamesThirdPlace: true,
     },
   });
 
   const participantsWithStats = participants.map((participant) => {
-    const gamesWon = participant.games.filter((game) => game.winnerId === participant.id).length;
-    const percentageWon = (gamesWon / participant.games.length * 100).toFixed(1) + '%'; // Format the number
+    const gamesWon = participant.gamesWon.length;
+    const gamesSecondPlace = participant.gamesSecondPlace.length;
+    const gamesThirdPlace = participant.gamesThirdPlace.length;
+
+    const totalPoints = gamesWon * 5 + gamesSecondPlace * 3 + gamesThirdPlace;
+
+    const percentageWon = gamesWon / participant.games.length * 100;
+    const formattedPercentageWon = percentageWon ? percentageWon.toFixed(1) + '%' : '0%';
 
     return {
       ...participant,
       games: participant.games.length,
       gamesWon,
-      percentageWon, // This is now a string like '38.8%'
+      gamesSecondPlace,
+      gamesThirdPlace,
+      percentageWon: formattedPercentageWon,
+      totalPoints,
     };
   });
 
-  return participantsWithStats.sort((a, b) => parseFloat(b.percentageWon) - parseFloat(a.percentageWon));
+  return participantsWithStats.sort((a, b) => b.totalPoints - a.totalPoints || parseFloat(b.percentageWon) - parseFloat(a.percentageWon));
 }
 
 export default async function Home() {

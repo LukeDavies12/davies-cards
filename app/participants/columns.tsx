@@ -6,9 +6,12 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export type ParticipantWithStats = Participant & {
-  games: number
-  gamesWon: number
-  percentageWon: string
+  games: number;
+  gamesWon: number;
+  gamesSecondPlace: number;
+  gamesThirdPlace: number;
+  percentageWon: string;
+  totalPoints: number;
 }
 
 export const columns: ColumnDef<ParticipantWithStats>[] = [
@@ -53,6 +56,20 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Win %
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    accessorKey: "totalPoints",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Points
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
