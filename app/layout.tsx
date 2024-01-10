@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Davies Cards Scoreboard',
+  title: 'Davies O-Hell Scoreboard',
   description: 'A dashboard for tracking scores for the Davies family card games.',
 }
 
