@@ -25,7 +25,7 @@ async function getParticipants() {
 
     return {
       ...participant,
-      games: participant.games.length,
+      gamesPlayed: participant.games.length,
       gamesWon,
       gamesSecondPlace,
       gamesThirdPlace,

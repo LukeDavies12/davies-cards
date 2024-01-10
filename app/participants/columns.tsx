@@ -1,12 +1,12 @@
 "use client"
 
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef, FilterFnOption } from "@tanstack/react-table"
 import { Participant } from "@prisma/client"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export type ParticipantWithStats = Participant & {
-  games: number;
+  gamesPlayed: number;
   gamesWon: number;
   gamesSecondPlace: number;
   gamesThirdPlace: number;
@@ -26,6 +26,7 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-lg"
         >
           Games Won
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -34,12 +35,14 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
     },
   },
   {
-    accessorKey: "games",
+    accessorKey: "gamesPlayed",
+    filterFn: 'greaterThan' as FilterFnOption<ParticipantWithStats>,
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-lg"
         >
           Games Played
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -54,6 +57,7 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-lg italic"
         >
           Win %
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -68,6 +72,7 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-lg"
         >
           Points
           <ArrowUpDown className="ml-2 h-4 w-4" />
