@@ -15,6 +15,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
+  const handleResetFilters = () => {
+    setColumnFilters([]);
+    setSorting([]);
+  }
+
   const table = useReactTable({
     data: data,
     columns: columns,
@@ -32,6 +37,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
   return (
     <div>
+      <div className="flex items-center mb-6 justify-end">
+        <Button variant={"outline"} onClick={handleResetFilters}>Reset Table</Button>
+      </div>
       <div className="rounded-md border">
         <Table className="">
           <TableHeader>

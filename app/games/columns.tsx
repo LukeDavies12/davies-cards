@@ -75,6 +75,10 @@ export const columns: ColumnDef<GamesWithParticipants>[] = [
   },
   {
     accessorKey: "thirdPlace",
+    header: "3rd Place",
+  },
+  {
+    accessorKey: "thirdPlaceScore",
     header: ({ column }) => {
       return (
         <Button
@@ -86,9 +90,5 @@ export const columns: ColumnDef<GamesWithParticipants>[] = [
         </Button>
       )
     },
-  },
-  {
-    accessorKey: "thirdPlaceScore",
-    header: "3rd Place Score",
   }
 ]
