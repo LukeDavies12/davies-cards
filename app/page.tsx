@@ -1,6 +1,8 @@
 import { db } from "@/db";
 import { DataTable } from './participants/data-table';
 import { ParticipantWithStats, columns } from './participants/columns';
+import Link from "next/link";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 async function getParticipants() {
   const participants = await db.participant.findMany({
@@ -46,9 +48,19 @@ export default async function Home() {
 
   return (
     <div>
-      <div className="py-4">
-        <DataTable columns={columns} data={data} />
-      </div>
+      <Tabs defaultValue="o-hell" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 h-11">
+          <TabsTrigger value="o-hell" className="py-2">O-Hell Leaderboard</TabsTrigger>
+          <TabsTrigger value="password" className="py-2">Hearts Leaderboard</TabsTrigger>
+        </TabsList>
+        <TabsContent value="o-hell">
+          <div className="py-4">
+            <DataTable columns={columns} data={data} />
+          </div>
+          <Link href={`/games`} className="font-medium text-primary underline underline-offset-4">Game Log</Link>
+        </TabsContent>
+        <TabsContent value="password">Change your password here.</TabsContent>
+      </Tabs>
     </div>
   )
 }

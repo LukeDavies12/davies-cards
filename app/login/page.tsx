@@ -25,15 +25,6 @@ const Page = async () => {
         <Input type="password" name="password" id="password" />
         <br />
       </AuthForm>
-      <div className="mt-4 text-sm text-center text-muted-foreground">
-        Don&apos;t have an account yet?{" "}
-        <Link
-          href="/signup"
-          className="text-accent-foreground underline hover:text-primary"
-        >
-          Create an account
-        </Link>
-      </div>
     </main>
   );
 };
