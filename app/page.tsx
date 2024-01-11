@@ -1,10 +1,9 @@
-import prisma from "@/utils/prisma";
-import { Participant, Game } from '@prisma/client';
+import { db } from "@/db";
 import { DataTable } from './participants/data-table';
 import { ParticipantWithStats, columns } from './participants/columns';
 
 async function getParticipants() {
-  const participants = await prisma.participant.findMany({
+  const participants = await db.participant.findMany({
     include: {
       games: true,
       gamesWon: true,

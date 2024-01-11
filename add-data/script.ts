@@ -1,6 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
-
-const prisma = new PrismaClient();
+import { db } from "@/db";
 
 async function main() {
   // Mapping of participant names to their IDs
@@ -188,7 +186,7 @@ async function main() {
   // Make sure the enclosing function is async
   async function createGames() {
     for (const gameData of gamesData) {
-      const newGame = await prisma.game.create({
+      const newGame = await db.game.create({
         data: {
           date: gameData.date,
           participants: {
@@ -223,10 +221,10 @@ async function main() {
 
 main()
   .then(async () => {
-    await prisma.$disconnect();
+    await db.$disconnect();
   })
   .catch(async (e) => {
     console.error(e);
-    await prisma.$disconnect();
+    await db.$disconnect();
     process.exit(1);
   });

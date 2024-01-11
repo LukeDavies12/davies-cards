@@ -2,7 +2,7 @@
 
 import { ColumnDef, FilterFnOption } from "@tanstack/react-table"
 import { Participant } from "@prisma/client"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export type ParticipantWithStats = Participant & {
