@@ -11,7 +11,7 @@ const Page = async () => {
   return (
     <main className="max-w-lg mx-auto my-4 bg-card p-10">
       <h1 className="text-2xl font-bold text-center">Create an account</h1>
-      <AuthForm action="/api/sign-up">
+      <AuthForm action="/api/signup">
         <Label htmlFor="username" className="text-muted-foreground">
           Username
         </Label>
@@ -25,8 +25,8 @@ const Page = async () => {
       </AuthForm>
       <div className="mt-4 text-muted-foreground text-center text-sm">
         Already have an account?{" "}
-        <Link href="/sign-in" className="text-secondary-foreground underline">
-          Sign in
+        <Link href="/login" className="text-secondary-foreground underline">
+          Login
         </Link>
       </div>
     </main>

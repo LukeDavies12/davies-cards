@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 
 export default function SignOutBtn() {
   const router = useRouter();
   const handleSignOut = async () => {
-    const response = await fetch("/api/sign-out", {
+    const response = await fetch("/api/logout", {
       method: "POST",
       redirect: "manual",
     });
@@ -17,8 +18,8 @@ export default function SignOutBtn() {
     }
   };
   return (
-    <button onClick={handleSignOut} className="w-full text-left">
-      Sign out
-    </button>
+    <Button onClick={handleSignOut} className="text-left">
+      Logout
+    </Button>
   );
 }

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-type Action = "/api/sign-in" | "/api/sign-up" | "/api/sign-out";
+type Action = "/api/login" | "/api/signup" | "/api/logout";
 
 const AuthForm = ({
   children,
@@ -64,22 +64,22 @@ const SubmitButton = ({
 }) => {
   let buttonSuffix = "";
   switch (action) {
-    case "/api/sign-in":
+    case "/api/login":
       buttonSuffix = "in";
       break;
-    case "/api/sign-out":
+    case "/api/logout":
       buttonSuffix = "out";
       break;
-    case "/api/sign-up":
+    case "/api/signup":
       buttonSuffix = "up";
       break;
   }
   return (
     <Button
       type="submit"
-      className={action === "/api/sign-out" ? "" : "w-full"}
+      className={action === "/api/logout" ? "" : "w-full"}
       disabled={loading}
-      variant={action === "/api/sign-out" ? "destructive" : "default"}
+      variant={action === "/api/logout" ? "destructive" : "default"}
     >
       Sign{loading ? "ing" : ""} {buttonSuffix}
     </Button>

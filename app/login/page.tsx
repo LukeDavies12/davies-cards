@@ -13,7 +13,7 @@ const Page = async () => {
       <h1 className="text-2xl font-bold text-center">
         Sign in to your account
       </h1>
-      <AuthForm action="/api/sign-in">
+      <AuthForm action="/api/login">
         <Label htmlFor="username" className="text-muted-foreground">
           Username
         </Label>
@@ -28,7 +28,7 @@ const Page = async () => {
       <div className="mt-4 text-sm text-center text-muted-foreground">
         Don&apos;t have an account yet?{" "}
         <Link
-          href="/sign-up"
+          href="/signup"
           className="text-accent-foreground underline hover:text-primary"
         >
           Create an account
