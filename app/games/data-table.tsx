@@ -1,8 +1,10 @@
 "use client"
 
-import { ColumnDef, flexRender, getFilteredRowModel, ColumnFiltersState, getCoreRowModel, useReactTable, SortingState, getSortedRowModel, FilterFn } from "@tanstack/react-table";
+import { ColumnDef, getPaginationRowModel, flexRender, getFilteredRowModel, ColumnFiltersState, getCoreRowModel, useReactTable, SortingState, getSortedRowModel, FilterFn } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import React from "react"
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -21,6 +23,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       columnFilters
@@ -68,6 +71,25 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           </TableBody>
         </Table>
       </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
+      <Link href={`/`} className="font-medium text-primary underline underline-offset-4">O-Hell Leaderboard</Link>
     </div>
   )
 }

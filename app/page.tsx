@@ -59,7 +59,7 @@ export default async function Home() {
           </div>
           <Link href={`/games`} className="font-medium text-primary underline underline-offset-4">Game Log</Link>
         </TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
+        <TabsContent value="password">TODO HEARTS DATA.</TabsContent>
       </Tabs>
     </div>
   )

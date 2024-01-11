@@ -22,7 +22,7 @@ async function getGames() {
     },
   });
 
-  let gamesWithParticipants: GamesWithParticipants[] = games.map((game) => {
+  let gamesWithParticipants = games.map((game) => {
     return {
       ...game,
       participants: game.participants.map(p => ({ name: p.name })),
@@ -33,8 +33,16 @@ async function getGames() {
     };
   });
 
+  // Sort games by date
+  gamesWithParticipants.sort((a, b) => {
+    const dateA = new Date(a.dateString);
+    const dateB = new Date(b.dateString);
+    return  dateB.getTime() - dateA.getTime();
+  });
+
   return gamesWithParticipants;
 }
+
 
 
 export default async function Page() {
@@ -42,6 +50,7 @@ export default async function Page() {
 
   return (
     <div>
+      <h1 className="text-2xl font-bold">O-Hell Games</h1>
       <div className="py-4">
         <DataTable columns={columns} data={data} />
       </div>

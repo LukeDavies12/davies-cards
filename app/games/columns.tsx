@@ -18,7 +18,17 @@ export type GamesWithParticipants = Game & {
 export const columns: ColumnDef<GamesWithParticipants>[] = [
   {
     accessorKey: "dateString",
-    header: "Date",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
+        >
+          Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: "participants",
@@ -33,7 +43,17 @@ export const columns: ColumnDef<GamesWithParticipants>[] = [
   },
   {
     accessorKey: "winnerScore",
-    header: "Winning Score",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
+        >
+          Winning Score
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: "secondPlace",
@@ -41,11 +61,31 @@ export const columns: ColumnDef<GamesWithParticipants>[] = [
   },
   {
     accessorKey: "secondPlaceScore",
-    header: "2nd Place Score",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
+        >
+          2nd Place Score
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: "thirdPlace",
-    header: "3rd Place",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
+        >
+          3rd Place Score
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: "thirdPlaceScore",
