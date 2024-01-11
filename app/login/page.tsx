@@ -7,7 +7,8 @@ import { redirect } from "next/navigation";
 
 const Page = async () => {
   const session = await getPageSession();
-  if (session?.user) redirect("/");
+  if (session?.user) redirect("/admin");
+  
   return (
     <main className="max-w-lg mx-auto my-4 bg-card p-10">
       <h1 className="text-2xl font-bold text-center">

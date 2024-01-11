@@ -4,16 +4,14 @@ import { redirect } from "next/navigation";
 import SignOutBtn from "@/components/auth/SignOutBtn";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest("GET", context);
+  const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (!session) redirect("/login");
-	return (
-		<>
-			<h1>Profile</h1>
-			<p>Username: {session.user.username}</p>
-      <SignOutBtn />
-		</>
-	);
-};
+  return (
+    <>
+      <h1 className="text-2xl font-bold">Admin</h1>
+    </>
+  );
+}
 
 export default Page;

@@ -19,7 +19,7 @@ export const POST = async (request: NextRequest) => {
   return new Response(null, {
     status: 302,
     headers: {
-      Location: "/signin", // redirect to login page
+      Location: "/login", // redirect to login page
     },
   });
 };
