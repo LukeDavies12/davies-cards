@@ -1,11 +1,11 @@
 "use client"
 
-import { ColumnDef, FilterFnOption } from "@tanstack/react-table"
-import { Game, Participant } from "@prisma/client"
+import { ColumnDef } from "@tanstack/react-table"
+import { Game } from "@prisma/client"
 import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-export type GamesWithParticipants = Game & {
+export type HeartsGamesWithParticipants = Game & {
   participants: {
     name: string;
   }[];
@@ -15,7 +15,7 @@ export type GamesWithParticipants = Game & {
   dateString: string;
 }
 
-export const columns: ColumnDef<GamesWithParticipants>[] = [
+export const heartsColumns: ColumnDef<HeartsGamesWithParticipants>[] = [
   {
     accessorKey: "dateString",
     header: ({ column }) => {

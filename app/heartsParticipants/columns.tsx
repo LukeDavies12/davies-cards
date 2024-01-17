@@ -5,16 +5,16 @@ import { Participant } from "@prisma/client"
 import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-export type ParticipantWithStats = Participant & {
+export type HeartsParticipantWithStats = Participant & {
   gamesPlayed: number;
   gamesWon: number;
   gamesSecondPlace: number;
   gamesThirdPlace: number;
   percentageWon: string;
   totalPoints: number;
-}
+};
 
-export const columns: ColumnDef<ParticipantWithStats>[] = [
+export const heartsColumns: ColumnDef<HeartsParticipantWithStats>[] = [
   {
     accessorKey: "name",
     header: "Name",
@@ -63,7 +63,7 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
   },
   {
     accessorKey: "gamesPlayed",
-    filterFn: 'greaterThan' as FilterFnOption<ParticipantWithStats>,
+    filterFn: 'greaterThan' as FilterFnOption<HeartsParticipantWithStats>,
     header: ({ column }) => {
       return (
         <Button

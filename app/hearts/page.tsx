@@ -1,26 +1,32 @@
-import { db } from "@/db"
-import { DataTable } from "./data-table"
-import { GamesWithParticipants, columns } from "./columns"
+import { db } from "@/db";
+import { heartsColumns } from "./columns";
+import { HeartsDataTable } from "./data-table";
 
-function formatDate(dateString: string | number | Date) {
+function formatDate(dateString: string | Date | number) {
   const date = new Date(dateString);
   
-  const month = date.toLocaleString('en-US', { month: 'short' }); // abbreviated month name
-  const day = date.getDate(); // numeric day of the month
-  const year = date.getFullYear().toString().substr(-2); // last two digits of the year
+  const month = date.getUTCMonth(); // Get month as a number (0-11)
+  const day = date.getUTCDate(); // Get day of the month (1-31)
+  const year = date.getUTCFullYear(); // Get full year in YYYY format
+  
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const formattedMonth = monthNames[month]; // Get month name from array
 
-  return `${month} ${day} '${year}`;
+  return `${formattedMonth} ${day} '${year.toString().substr(-2)}`;
 }
 
-async function getGames() {
+async function getHeartsGames() {
   const games = await db.game.findMany({
+    where: {
+      gameTypeId: 2, // Update to fetch hearts games
+    },
     include: {
       participants: true,
       winner: true, // Include the winner
       secondPlace: true, // Include the second place
       thirdPlace: true, // Include the third place
     },
-  });
+  })
 
   let gamesWithParticipants = games.map((game) => {
     return {
@@ -29,7 +35,7 @@ async function getGames() {
       winner: game.winner?.name || '', // Convert to string
       secondPlace: game.secondPlace?.name || '', // Convert to string
       thirdPlace: game.thirdPlace?.name || '', // Convert to string
-      dateString: formatDate(game.date),
+      dateString: formatDate(game.date), // Assuming formatDate is already defined
     };
   });
 
@@ -44,15 +50,14 @@ async function getGames() {
 }
 
 
-
 export default async function Page() {
-  const data = await getGames();
+  const data = await getHeartsGames();
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">O-Hell Games</h1>
+      <h1 className="text-2xl font-bold">Hearts Games</h1>
       <div className="py-4">
-        <DataTable columns={columns} data={data} />
+        <HeartsDataTable columns={heartsColumns} data={data} />
       </div>
     </div>
   )
