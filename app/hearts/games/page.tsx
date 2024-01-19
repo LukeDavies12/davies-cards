@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { columns } from "./columns";
-import { DataTable } from "./data-table";
+import { heartsColumns } from "../columns";
+import { HeartsDataTable } from "../data-table";
 
 function formatDate(dateString: string | Date | number) {
   const date = new Date(dateString);
@@ -15,10 +15,10 @@ function formatDate(dateString: string | Date | number) {
   return `${formattedMonth} ${day} '${year.toString().substr(-2)}`;
 }
 
-async function getGames() {
+async function getHeartsGames() {
   const games = await db.game.findMany({
     where: {
-      gameTypeId: 1,
+      gameTypeId: 2, // Update to fetch hearts games
     },
     include: {
       participants: true,
@@ -35,7 +35,7 @@ async function getGames() {
       winner: game.winner?.name || '', // Convert to string
       secondPlace: game.secondPlace?.name || '', // Convert to string
       thirdPlace: game.thirdPlace?.name || '', // Convert to string
-      dateString: formatDate(game.date),
+      dateString: formatDate(game.date), // Assuming formatDate is already defined
     };
   });
 
@@ -50,15 +50,14 @@ async function getGames() {
 }
 
 
-
 export default async function Page() {
-  const data = await getGames();
+  const data = await getHeartsGames();
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">O-Hell Games</h1>
+      <h1 className="text-2xl font-bold">Hearts Games</h1>
       <div className="py-4">
-        <DataTable columns={columns} data={data} />
+        <HeartsDataTable columns={heartsColumns} data={data} />
       </div>
     </div>
   )

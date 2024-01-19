@@ -1,64 +1,82 @@
 import { db } from "@/db";
-import { heartsColumns } from "./columns";
-import { HeartsDataTable } from "./data-table";
+import Link from "next/link";
+import { heartsColumns } from "../heartsParticipants/columns";
+import { HeartsDataTable } from "../heartsParticipants/data-table";
 
-function formatDate(dateString: string | Date | number) {
-  const date = new Date(dateString);
-  
-  const month = date.getUTCMonth(); // Get month as a number (0-11)
-  const day = date.getUTCDate(); // Get day of the month (1-31)
-  const year = date.getUTCFullYear(); // Get full year in YYYY format
-  
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const formattedMonth = monthNames[month]; // Get month name from array
-
-  return `${formattedMonth} ${day} '${year.toString().substr(-2)}`;
-}
-
-async function getHeartsGames() {
-  const games = await db.game.findMany({
-    where: {
-      gameTypeId: 2, // Update to fetch hearts games
-    },
+async function getHeartsParticipants() {
+  const participants = await db.participant.findMany({
     include: {
-      participants: true,
-      winner: true, // Include the winner
-      secondPlace: true, // Include the second place
-      thirdPlace: true, // Include the third place
+      games: {
+        where: {
+          gameTypeId: 2,
+        },
+      },
+      gamesWon: {
+        where: {
+          gameTypeId: 2,
+        },
+      },
+      gamesSecondPlace: {
+        where: {
+          gameTypeId: 2,
+        },
+      },
+      gamesThirdPlace: {
+        where: {
+          gameTypeId: 2,
+        },
+      },
     },
-  })
+  });
 
-  let gamesWithParticipants = games.map((game) => {
+  let participantsWithStats = participants.map((participant) => {
+    const gamesWon = participant.gamesWon.length;
+    const gamesSecondPlace = participant.gamesSecondPlace.length;
+    const gamesThirdPlace = participant.gamesThirdPlace.length;
+    const gamesPlayed = participant.games.length;
+    const rawTotalPoints = gamesWon * 5 + gamesSecondPlace * 3 + gamesThirdPlace;
+    const totalPoints = (gamesPlayed > 0 ? parseFloat((rawTotalPoints / gamesPlayed).toFixed(1)) : 0) * 10;
+    const percentageWon = gamesPlayed > 0 ? (gamesWon / gamesPlayed) * 100 : 0;
+    const formattedPercentageWon = percentageWon.toFixed(1) + '%';
+
     return {
-      ...game,
-      participants: game.participants.map(p => ({ name: p.name })),
-      winner: game.winner?.name || '', // Convert to string
-      secondPlace: game.secondPlace?.name || '', // Convert to string
-      thirdPlace: game.thirdPlace?.name || '', // Convert to string
-      dateString: formatDate(game.date), // Assuming formatDate is already defined
+      ...participant,
+      gamesPlayed,
+      gamesWon,
+      gamesSecondPlace,
+      gamesThirdPlace,
+      percentageWon: formattedPercentageWon,
+      totalPoints,
     };
   });
 
-  // Sort games by date
-  gamesWithParticipants.sort((a, b) => {
-    const dateA = new Date(a.dateString);
-    const dateB = new Date(b.dateString);
-    return  dateB.getTime() - dateA.getTime();
-  });
+  participantsWithStats = participantsWithStats.sort((a, b) => parseFloat(b.percentageWon) - parseFloat(a.percentageWon))
+    .map((participant) => ({
+      ...participant,
+    }));
 
-  return gamesWithParticipants;
+  return participantsWithStats;
 }
 
-
 export default async function Page() {
-  const data = await getHeartsGames();
+  const hearts = await getHeartsParticipants();
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Hearts Games</h1>
-      <div className="py-4">
-        <HeartsDataTable columns={heartsColumns} data={data} />
+      <div className="p-1 flex bg bg-neutral-100 rounded-md mb-4">
+        <div className="w-1/2">
+          <Link href={`/`}><div className="w-full flex justify-center py-1 rounded-md"><span className="text-neutral-500">O-Hell</span></div></Link>
+
+        </div>
+        <div className="w-1/2">
+          <Link href={`/hearts`}><div className="w-full flex justify-center py-1 bg-white rounded-md shadow-sm"><span>Hearts</span></div></Link>
+        </div>
       </div>
+      <h1 className="text-2xl font-bold">Hearts Leaderboard</h1>
+      <div className="py-4">
+        <HeartsDataTable columns={heartsColumns} data={hearts} />
+      </div>
+      <Link href={`/hearts/games`} className="font-medium text-primary underline underline-offset-4">Game Log</Link>
     </div>
   )
 }

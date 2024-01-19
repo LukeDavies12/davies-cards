@@ -1,8 +1,7 @@
+import { getPageSession } from "@/auth/lucia";
 import AuthForm from "@/components/auth/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getPageSession } from "@/auth/lucia";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const Page = async () => {
