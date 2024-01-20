@@ -18,7 +18,7 @@ export default function SignOutBtn() {
     }
   };
   return (
-    <Button onClick={handleSignOut} className="text-left">
+    <Button onClick={handleSignOut} className="text-left max-w-sm">
       Logout
     </Button>
   );

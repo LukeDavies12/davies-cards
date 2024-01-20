@@ -21,6 +21,22 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
     header: "Name",
   },
   {
+    accessorKey: "percentageWon",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
+          className="italic font-medium"
+        >
+          Win %
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: info => info.row.original.percentageWonString
+  },
+  {
     accessorKey: "gamesWon",
     header: ({ column }) => {
       return (
@@ -76,22 +92,6 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
         </Button>
       )
     },
-  },
-  {
-    accessorKey: "percentageWon",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
-          className="italic font-medium"
-        >
-          Win %
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: info => info.row.original.percentageWonString
   },
   {
     accessorKey: "totalPoints",

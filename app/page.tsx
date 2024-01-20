@@ -77,6 +77,7 @@ export default async function Home() {
         <DataTable columns={columns} data={oHell} />
       </div>
       <Link href={`/o-hell/games`} className="font-medium text-primary underline underline-offset-4">Game Log</Link>
+      <div className="pb-4"></div>
     </div>
   )
 }

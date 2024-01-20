@@ -12,12 +12,10 @@ const Page = async () => {
   return (
     <>
       <h1 className="text-2xl font-bold">Admin</h1>
-      <div className="py-4">
+      <div className="py-4 flex flex-col gap-4">
         <StyledLink href="/admin/log">Log Game</StyledLink>
-        <br />
+        <StyledLink href="/admin/games">All Games Table</StyledLink>
         <StyledLink href="/admin/profile">Profile</StyledLink>
-        <br />
-        <br />
         <SignOutBtn />
       </div>
     </>
