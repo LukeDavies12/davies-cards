@@ -37,7 +37,7 @@ async function getHeartsParticipants() {
     const rawTotalPoints = gamesWon * 5 + gamesSecondPlace * 3 + gamesThirdPlace;
     const totalPoints = (gamesPlayed > 0 ? parseFloat((rawTotalPoints / gamesPlayed).toFixed(1)) : 0) * 10;
     const percentageWon = gamesPlayed > 0 ? (gamesWon / gamesPlayed) * 100 : 0;
-    const formattedPercentageWon = percentageWon.toFixed(1) + '%';
+    const percentageWonString = percentageWon.toFixed(1) + '%';
 
     return {
       ...participant,
@@ -45,12 +45,13 @@ async function getHeartsParticipants() {
       gamesWon,
       gamesSecondPlace,
       gamesThirdPlace,
-      percentageWon: formattedPercentageWon,
+      percentageWon,
+      percentageWonString,
       totalPoints,
     };
   });
 
-  participantsWithStats = participantsWithStats.sort((a, b) => parseFloat(b.percentageWon) - parseFloat(a.percentageWon))
+  participantsWithStats = participantsWithStats.sort((a, b) => b.percentageWon - a.percentageWon)
     .map((participant) => ({
       ...participant,
     }));

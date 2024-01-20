@@ -31,7 +31,7 @@ async function getGames() {
   let gamesWithParticipants = games.map((game) => {
     return {
       ...game,
-      participants: game.participants.map(p => ({ name: p.name })),
+      participants: game.participants.map((participant: { name?: string }) => participant.name).filter(name => name).join(', '),
       winner: game.winner?.name || '', // Convert to string
       secondPlace: game.secondPlace?.name || '', // Convert to string
       thirdPlace: game.thirdPlace?.name || '', // Convert to string

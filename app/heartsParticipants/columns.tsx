@@ -1,16 +1,17 @@
 "use client"
 
-import { ColumnDef, FilterFnOption } from "@tanstack/react-table"
-import { Participant } from "@prisma/client"
-import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Participant } from "@prisma/client"
+import { ColumnDef, FilterFnOption } from "@tanstack/react-table"
+import { ArrowUpDown } from "lucide-react"
 
 export type HeartsParticipantWithStats = Participant & {
   gamesPlayed: number;
   gamesWon: number;
   gamesSecondPlace: number;
   gamesThirdPlace: number;
-  percentageWon: string;
+  percentageWon: number;
+  percentageWonString: string;
   totalPoints: number;
 };
 
@@ -90,6 +91,7 @@ export const heartsColumns: ColumnDef<HeartsParticipantWithStats>[] = [
         </Button>
       )
     },
+    cell: info => info.row.original.percentageWonString
   },
   {
     accessorKey: "totalPoints",

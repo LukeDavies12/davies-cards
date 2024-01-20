@@ -4,11 +4,11 @@ import { HeartsDataTable } from "../data-table";
 
 function formatDate(dateString: string | Date | number) {
   const date = new Date(dateString);
-  
+
   const month = date.getUTCMonth(); // Get month as a number (0-11)
   const day = date.getUTCDate(); // Get day of the month (1-31)
   const year = date.getUTCFullYear(); // Get full year in YYYY format
-  
+
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const formattedMonth = monthNames[month]; // Get month name from array
 
@@ -31,7 +31,7 @@ async function getHeartsGames() {
   let gamesWithParticipants = games.map((game) => {
     return {
       ...game,
-      participants: game.participants.map(p => ({ name: p.name })),
+      participants: game.participants.map((participant: { name?: string }) => participant.name).filter(name => name).join(', '),
       winner: game.winner?.name || '', // Convert to string
       secondPlace: game.secondPlace?.name || '', // Convert to string
       thirdPlace: game.thirdPlace?.name || '', // Convert to string
@@ -43,7 +43,7 @@ async function getHeartsGames() {
   gamesWithParticipants.sort((a, b) => {
     const dateA = new Date(a.dateString);
     const dateB = new Date(b.dateString);
-    return  dateB.getTime() - dateA.getTime();
+    return dateB.getTime() - dateA.getTime();
   });
 
   return gamesWithParticipants;

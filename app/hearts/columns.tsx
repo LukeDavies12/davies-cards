@@ -1,14 +1,12 @@
 "use client"
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Game } from "@prisma/client"
-import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Game } from "@prisma/client"
+import { ColumnDef } from "@tanstack/react-table"
+import { ArrowUpDown } from "lucide-react"
 
 export type HeartsGamesWithParticipants = Game & {
-  participants: {
-    name: string;
-  }[];
+  participants: string;
   winner: string;
   secondPlace: string;
   thirdPlace: string;
@@ -33,9 +31,6 @@ export const heartsColumns: ColumnDef<HeartsGamesWithParticipants>[] = [
   {
     accessorKey: "participants",
     header: "Participants",
-    cell: ({ row }) => {
-      return row.original.participants.map((participant: { name: string }) => participant.name).join(', ');
-    }
   },
   {
     accessorKey: "winner",

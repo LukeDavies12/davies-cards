@@ -1,11 +1,11 @@
 "use client"
 
-import { ColumnDef, flexRender, getFilteredRowModel, ColumnFiltersState, getCoreRowModel, useReactTable, SortingState, getSortedRowModel, FilterFn } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import React from "react"
 import { Button } from "@/components/ui/button";
-import { ParticipantWithStats } from "./columns";
 import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ColumnDef, ColumnFiltersState, FilterFn, SortingState, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
+import React from "react";
+import { ParticipantWithStats } from "./columns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -21,6 +21,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   const [minGamesPlayed, setMinGamesPlayed] = React.useState('');
 
   const handleMinGamesPlayedChange = (value: string) => {
+    handleResetFilters();
     setMinGamesPlayed(value);
     if (value === '') {
       // If the input is empty, remove the filter
@@ -89,11 +90,12 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           value={minGamesPlayed}
           onChange={(e) => handleMinGamesPlayedChange(e.target.value)}
           placeholder="Filter for Min. Games Played"
+          min={0}
         />
         <Button variant={"outline"} onClick={handleResetFilters}>Reset Table</Button>
       </div>
       <div className="rounded-md border">
-        <Table className="">
+        <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

@@ -1,14 +1,12 @@
 "use client"
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Game } from "@prisma/client"
-import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Game } from "@prisma/client"
+import { ColumnDef } from "@tanstack/react-table"
+import { ArrowUpDown } from "lucide-react"
 
 export type GamesWithParticipants = Game & {
-  participants: {
-    name: string;
-  }[];
+  participants: string;
   winner: string;
   secondPlace: string;
   thirdPlace: string;
@@ -33,16 +31,6 @@ export const columns: ColumnDef<GamesWithParticipants>[] = [
   {
     accessorKey: "participants",
     header: "Participants",
-    cell: ({ row }) => {
-      // Assuming row.original.participants is an array of objects with a 'name' property
-      if (Array.isArray(row.original.participants)) {
-        return row.original.participants
-          .map((participant: { name?: string }) => participant.name)
-          .filter(name => name) // Filter out undefined or null names
-          .join(', ');
-      }
-      return ''; // Return an empty string if participants is not an array
-    }
   },
   {
     accessorKey: "winner",

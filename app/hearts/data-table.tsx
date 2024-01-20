@@ -1,10 +1,11 @@
 "use client"
 
-import { ColumnDef, getPaginationRowModel, flexRender, getFilteredRowModel, ColumnFiltersState, getCoreRowModel, useReactTable, SortingState, getSortedRowModel, FilterFn } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import React from "react"
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ColumnDef, ColumnFiltersState, SortingState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import Link from "next/link";
+import React from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,7 +40,15 @@ export function HeartsDataTable<TData, TValue>({ columns, data }: DataTableProps
 
   return (
     <div>
-      <div className="flex items-center mb-6 justify-end">
+      <div className="flex items-center mb-6 justify-between">
+      <Input
+          className="max-w-sm"
+          value={(table.getColumn("participants")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("participants")?.setFilterValue(event.target.value)
+          }
+          placeholder="Filter for Participants"
+        />
         <Button variant={"outline"} onClick={handleResetFilters}>Reset Table</Button>
       </div>
       <div className="rounded-md border">
@@ -99,7 +108,7 @@ export function HeartsDataTable<TData, TValue>({ columns, data }: DataTableProps
           Next
         </Button>
       </div>
-      <Link href={`/`} className="font-medium text-primary underline underline-offset-4">O-Hell Leaderboard</Link>
+      <Link href={`/hearts`} className="font-medium text-primary underline underline-offset-4">Hearts Leaderboard</Link>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { auth } from "@/auth/lucia";
-import SignOutBtn from "@/components/auth/SignOutBtn";
+import GameForm from "@/components/games/form";
 import StyledLink from "@/components/ui/link";
 import * as context from "next/headers";
 import { redirect } from "next/navigation";
@@ -11,14 +11,10 @@ const Page = async () => {
 
   return (
     <>
-      <h1 className="text-2xl font-bold">Admin</h1>
+      <h1 className="text-2xl font-bold">Log Game</h1>
       <div className="py-4">
-        <StyledLink href="/admin/log">Log Game</StyledLink>
-        <br />
-        <StyledLink href="/admin/profile">Profile</StyledLink>
-        <br />
-        <br />
-        <SignOutBtn />
+        <GameForm />
+        <StyledLink href="/admin/" className="mt-4">Admin Home</StyledLink>
       </div>
     </>
   );

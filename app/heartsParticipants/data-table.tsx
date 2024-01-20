@@ -1,11 +1,11 @@
 "use client"
 
-import { ColumnDef, flexRender, getFilteredRowModel, ColumnFiltersState, getCoreRowModel, useReactTable, SortingState, getSortedRowModel, FilterFn } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import React from "react"
 import { Button } from "@/components/ui/button";
-import { HeartsParticipantWithStats } from "./columns";
 import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ColumnDef, ColumnFiltersState, FilterFn, SortingState, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
+import React from "react";
+import { HeartsParticipantWithStats } from "./columns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -89,6 +89,7 @@ export function HeartsDataTable<TData, TValue>({ columns, data }: DataTableProps
           value={minGamesPlayed}
           onChange={(e) => handleMinGamesPlayedChange(e.target.value)}
           placeholder="Filter for Min. Games Played"
+          min={0}
         />
         <Button variant={"outline"} onClick={handleResetFilters}>Reset Table</Button>
       </div>
