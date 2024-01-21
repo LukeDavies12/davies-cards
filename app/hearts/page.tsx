@@ -51,6 +51,8 @@ async function getHeartsParticipants() {
     };
   });
 
+  participantsWithStats = participantsWithStats.filter(participant => participant.gamesPlayed > 0);
+
   participantsWithStats = participantsWithStats.sort((a, b) => b.percentageWon - a.percentageWon)
     .map((participant) => ({
       ...participant,
