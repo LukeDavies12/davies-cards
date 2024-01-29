@@ -11,7 +11,7 @@ const Page = async () => {
 
   return (
     <>
-      <h1 className="text-2xl font-bold">Log Game</h1>
+      <h1 className="text-2xl font-bold">New Game</h1>
       <div className="py-4">
         <GameForm />
         <StyledLink href="/admin/" className="mt-4">Admin Home</StyledLink>

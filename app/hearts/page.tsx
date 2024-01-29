@@ -2,6 +2,8 @@ import { db } from "@/db";
 import Link from "next/link";
 import { heartsColumns } from "../heartsParticipants/columns";
 import { HeartsDataTable } from "../heartsParticipants/data-table";
+import dynamic from "next/dynamic";
+const ParticipantChart = dynamic(() => import('../../components/charts/mainCharts'), { ssr: false });
 
 async function getHeartsParticipants() {
   const participants = await db.participant.findMany({
@@ -76,7 +78,13 @@ export default async function Page() {
         </div>
       </div>
       <h1 className="text-2xl font-bold">Hearts Leaderboard</h1>
-      <div className="py-4">
+      <div className="py-4 flex flex-col gap-4">
+        <ParticipantChart
+          names={hearts.map(participant => participant.name)}
+          winPercentages={hearts.map(participant => participant.percentageWon)}
+          height={350}
+          width={1000}
+        />
         <HeartsDataTable columns={heartsColumns} data={hearts} />
       </div>
       <Link href={`/hearts/games`} className="font-medium text-primary underline underline-offset-4">Game Log</Link>

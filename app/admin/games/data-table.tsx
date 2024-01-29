@@ -99,7 +99,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           Next
         </Button>
       </div>
-      <Link href={`/`} className="font-medium text-primary underline underline-offset-4">Admin Home</Link>
+      <Link href={`/admin`} className="font-medium text-primary underline underline-offset-4">Admin Home</Link>
     </div>
   )
 }

@@ -2,6 +2,8 @@ import { db } from "@/db";
 import Link from "next/link";
 import { columns } from './participants/columns';
 import { DataTable } from './participants/data-table';
+import dynamic from 'next/dynamic';
+const ParticipantChart = dynamic(() => import('../components/charts/mainCharts'), { ssr: false });
 
 async function getParticipants() {
   const participants = await db.participant.findMany({
@@ -50,7 +52,7 @@ async function getParticipants() {
       totalPoints,
     };
   });
-  // Sort participants by win percentage in descending order and assign rank/place
+
   participantsWithStats = participantsWithStats.sort((a, b) => b.percentageWon - a.percentageWon)
     .map((participant) => ({
       ...participant,
@@ -73,7 +75,8 @@ export default async function Home() {
         </div>
       </div>
       <h1 className="text-2xl font-bold">O Hell Leaderboard</h1>
-      <div className="py-4">
+      <div className="py-4 flex flex-col gap-4">
+        <ParticipantChart names={oHell.map((participant) => participant.name)} winPercentages={oHell.map((participant) => participant.percentageWon)} height={350} width={1000} />
         <DataTable columns={columns} data={oHell} />
       </div>
       <Link href={`/o-hell/games`} className="font-medium text-primary underline underline-offset-4">Game Log</Link>
