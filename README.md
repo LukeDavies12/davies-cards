@@ -2,9 +2,15 @@
 
 This is a full-stack CRUD app to for a leaderboard of family card games over time.
 
+An admin account can log new games, and the public facing dashboard will be updated.
+
+![Dashboard Image]('./daviesCardsV1-index.png')
+
 ### Stack
 - Next.js
-
+  - Shad/CN UI
+  - Lucia Auth
+  - Prisma w Sqlite
 
 ## Development
 
