@@ -7,7 +7,7 @@ An admin account can log new games, and the public facing dashboard will be upda
 ![Dashboard Image](daviesCardsV1-index.png)
 ### Stack
 - Next.js
-  - Shad/CN UI
+  - shadcn/ui
   - Lucia Auth
   - Prisma w Sqlite
 
