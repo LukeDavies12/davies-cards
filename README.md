@@ -1,8 +1,8 @@
 ## Davies Cards
 
-This is a full-stack CRUD app to for a leaderboard of family card games over time.
+A full-stack CRUD app for a leaderboard of family card games over time.
 
-An admin account can log new games, and the public facing dashboard will be updated.
+An admin account can log new games, while the public facing dashboard shows the leaderboard.
 
 ![Dashboard Image](daviesCardsV1-index.png)
 ### Stack
