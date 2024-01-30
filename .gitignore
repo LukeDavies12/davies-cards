@@ -46,3 +46,4 @@ databases/**/migrations/
 experimental/**/*.db
 
 .*.env
+package-lock.json
