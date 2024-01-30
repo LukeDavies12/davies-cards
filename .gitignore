@@ -44,3 +44,5 @@ prisma/**/*.db-journal
 misc/**/migrations/
 databases/**/migrations/
 experimental/**/*.db
+
+.*.env
