@@ -3,6 +3,7 @@ import Link from "next/link";
 import { columns } from './participants/columns';
 import { DataTable } from './participants/data-table';
 import dynamic from 'next/dynamic';
+import { Participant } from "@prisma/client";
 const ParticipantChart = dynamic(() => import('../components/charts/mainCharts'), { ssr: false });
 
 async function getParticipants() {
@@ -31,7 +32,7 @@ async function getParticipants() {
     },
   });
 
-  let participantsWithStats = participants.map((participant) => {
+  let participantsWithStats = participants.map((participant: Participant) => {
     const gamesWon = participant.gamesWon.length;
     const gamesSecondPlace = participant.gamesSecondPlace.length;
     const gamesThirdPlace = participant.gamesThirdPlace.length;
@@ -53,8 +54,8 @@ async function getParticipants() {
     };
   });
 
-  participantsWithStats = participantsWithStats.sort((a, b) => b.percentageWon - a.percentageWon)
-    .map((participant) => ({
+  participantsWithStats = participantsWithStats.sort((a: any, b: any) => b.percentageWon - a.percentageWon)
+    .map((participant: Participant) => ({
       ...participant,
     }));
 
@@ -76,7 +77,7 @@ export default async function Home() {
       </div>
       <h1 className="text-2xl font-bold">O Hell Leaderboard</h1>
       <div className="py-4 flex flex-col gap-4">
-        <ParticipantChart names={oHell.map((participant) => participant.name)} winPercentages={oHell.map((participant) => participant.percentageWon)} height={350} width={1000} />
+        <ParticipantChart names={oHell.map((participant: Participant) => participant.name)} winPercentages={oHell.map((participant: Participant) => participant.percentageWon)} height={350} width={1000} />
         <DataTable columns={columns} data={oHell} />
       </div>
       <Link href={`/o-hell/games`} className="font-medium text-primary underline underline-offset-4">Game Log</Link>
