@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { authenticateRequest } from '@/utils/authUtil';
+import { Participant } from "@prisma/client";
 import type { NextRequest } from "next/server";
 
 export const POST = async (request: NextRequest) => {
@@ -49,7 +50,7 @@ export const POST = async (request: NextRequest) => {
         thirdPlaceScore: parseInt(thirdPlaceScore),
         gameTypeId: parseInt(gameTypeId),
         participants: {
-          connect: participants.map(p => ({ id: p.id })),
+          connect: participants.map((p: Participant) => ({ id: p.id })),
         },
       },
     });

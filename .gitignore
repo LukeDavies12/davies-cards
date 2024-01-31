@@ -47,3 +47,7 @@ experimental/**/*.db
 
 .*.env
 package-lock.json
+.dockerignore
+Dockerfile
+fly.toml
+docker-entrypoint.js
