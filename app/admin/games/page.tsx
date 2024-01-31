@@ -4,6 +4,7 @@ import * as context from "next/headers";
 import { redirect } from "next/navigation";
 import { GamesWithParticipantsandType, columns } from './columns';
 import { DataTable } from './data-table';
+import { Game } from "@prisma/client";
 
 function formatDate(dateString: string | Date | number) {
   const date = new Date(dateString);
@@ -29,10 +30,10 @@ async function getGames() {
     },
   })
 
-  let gamesWithParticipantsandType: GamesWithParticipantsandType[] = games.map((game) => {
+  let gamesWithParticipantsandType: GamesWithParticipantsandType[] = games.map((game: any) => {
   return {
     ...game,
-    participants: game.participants.map((participant) => participant.name).join(', '),
+    participants: game.participants.map((participant: any) => participant.name).join(', '),
     winner: game.winner?.name || '',
     secondPlace: game.secondPlace?.name || '',
     thirdPlace: game.thirdPlace?.name || '',
