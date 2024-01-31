@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { heartsColumns } from "../columns";
 import { HeartsDataTable } from "../data-table";
+import { Game } from "@prisma/client";
 
 function formatDate(dateString: string | Date | number) {
   const date = new Date(dateString);
@@ -28,10 +29,10 @@ async function getHeartsGames() {
     },
   })
 
-  let gamesWithParticipants = games.map((game) => {
+  let gamesWithParticipants = games.map((game: Game) => {
     return {
       ...game,
-      participants: game.participants.map((participant: { name?: string }) => participant.name).filter(name => name).join(', '),
+      participants: game.participants.map((participant: { name?: string }) => participant.name).filter((name: any) => name).join(', '),
       winner: game.winner?.name || '', // Convert to string
       secondPlace: game.secondPlace?.name || '', // Convert to string
       thirdPlace: game.thirdPlace?.name || '', // Convert to string
@@ -40,7 +41,7 @@ async function getHeartsGames() {
   });
 
   // Sort games by date
-  gamesWithParticipants.sort((a, b) => {
+  gamesWithParticipants.sort((a: any, b: any) => {
     const dateA = new Date(a.dateString);
     const dateB = new Date(b.dateString);
     return dateB.getTime() - dateA.getTime();
