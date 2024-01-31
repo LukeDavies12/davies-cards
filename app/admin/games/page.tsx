@@ -2,18 +2,8 @@ import { auth } from "@/auth/lucia";
 import { db } from "@/db";
 import * as context from "next/headers";
 import { redirect } from "next/navigation";
-import { columns } from './columns';
+import { GamesWithParticipantsandType, columns } from './columns';
 import { DataTable } from './data-table';
-import { Game, Participant } from "@prisma/client";
-
-interface GamesWithParticipantsandType extends Game {
-  participants: Participant[];
-  winner: Participant | null;
-  secondPlace: Participant | null;
-  thirdPlace: Participant | null;
-  type: { name: string };
-  date: Date;
-}
 
 function formatDate(dateString: string | Date | number) {
   const date = new Date(dateString);
@@ -39,26 +29,26 @@ async function getGames() {
     },
   })
 
-  let gamesWithParticipants = games.map((game: GamesWithParticipantsandType) => {
-    return {
-      ...game,
-      participants: game.participants.map((participant) => participant.name).join(', '),
-      winner: game.winner?.name || '',
-      secondPlace: game.secondPlace?.name || '',
-      thirdPlace: game.thirdPlace?.name || '',
-      dateString: formatDate(game.date),
-      gameTypeName: game.type.name || '',
-    };
-  });
+  let gamesWithParticipantsandType: GamesWithParticipantsandType[] = games.map((game) => {
+  return {
+    ...game,
+    participants: game.participants.map((participant) => participant.name).join(', '),
+    winner: game.winner?.name || '',
+    secondPlace: game.secondPlace?.name || '',
+    thirdPlace: game.thirdPlace?.name || '',
+    dateString: formatDate(game.date),
+    gameTypeName: game.type.name || '',
+  };
+});
 
   // Sort games by date
-  gamesWithParticipants.sort((a, b) => {
+  gamesWithParticipantsandType.sort((a: any, b: any) => {
     const dateA = new Date(a.dateString);
     const dateB = new Date(b.dateString);
     return dateB.getTime() - dateA.getTime();
   });
 
-  return gamesWithParticipants;
+  return gamesWithParticipantsandType;
 }
 
 
