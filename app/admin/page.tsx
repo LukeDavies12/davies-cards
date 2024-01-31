@@ -15,6 +15,7 @@ const Page = async () => {
       <div className="py-4 flex flex-col gap-4">
         <StyledLink href="/admin/new">New Game</StyledLink>
         <StyledLink href="/admin/participants/new">New Participant</StyledLink>
+        <StyledLink href="/admin/participants/remove">Remove Participant</StyledLink>
         <StyledLink href="/admin/games">All Games Table</StyledLink>
         <StyledLink href="/admin/profile">Profile</StyledLink>
         <SignOutBtn />

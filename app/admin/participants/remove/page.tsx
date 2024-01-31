@@ -1,5 +1,5 @@
 import { auth } from "@/auth/lucia";
-import { ParticipantForm } from "@/components/participants/form";
+import { RemoveParticipantFrom } from "@/components/participants/remove-form";
 import StyledLink from "@/components/ui/link";
 import * as context from "next/headers";
 import { redirect } from "next/navigation";
@@ -11,9 +11,9 @@ const Page = async () => {
 
   return (
     <>
-      <h1 className="text-2xl font-bold">New Participant</h1>
+      <h1 className="text-2xl font-bold">Remove Participant</h1>
       <div className="py-4">
-        <ParticipantForm />
+        <RemoveParticipantFrom />
         <StyledLink href="/admin/" className="mt-4">Admin Home</StyledLink>
       </div>
     </>
