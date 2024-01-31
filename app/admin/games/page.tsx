@@ -12,6 +12,7 @@ interface GamesWithParticipantsandType extends Game {
   secondPlace: Participant | null;
   thirdPlace: Participant | null;
   type: { name: string };
+  date: Date;
 }
 
 function formatDate(dateString: string | Date | number) {
