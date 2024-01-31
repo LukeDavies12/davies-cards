@@ -4,6 +4,15 @@ import * as context from "next/headers";
 import { redirect } from "next/navigation";
 import { columns } from './columns';
 import { DataTable } from './data-table';
+import { Game, Participant } from "@prisma/client";
+
+interface GamesWithParticipantsandType extends Game {
+  participants: Participant[];
+  winner: Participant | null;
+  secondPlace: Participant | null;
+  thirdPlace: Participant | null;
+  type: { name: string };
+}
 
 function formatDate(dateString: string | Date | number) {
   const date = new Date(dateString);
@@ -29,15 +38,15 @@ async function getGames() {
     },
   })
 
-  let gamesWithParticipants = games.map((game) => {
+  let gamesWithParticipants = games.map((game: GamesWithParticipantsandType) => {
     return {
       ...game,
-      participants: game.participants.map((participant: { name?: string }) => participant.name).filter(name => name).join(', '),
-      winner: game.winner?.name || '', // Convert to string
-      secondPlace: game.secondPlace?.name || '', // Convert to string
-      thirdPlace: game.thirdPlace?.name || '', // Convert to string
+      participants: game.participants.map((participant) => participant.name).join(', '),
+      winner: game.winner?.name || '',
+      secondPlace: game.secondPlace?.name || '',
+      thirdPlace: game.thirdPlace?.name || '',
       dateString: formatDate(game.date),
-      gameTypeName: game.type.name,
+      gameTypeName: game.type.name || '',
     };
   });
 
@@ -45,11 +54,12 @@ async function getGames() {
   gamesWithParticipants.sort((a, b) => {
     const dateA = new Date(a.dateString);
     const dateB = new Date(b.dateString);
-    return  dateB.getTime() - dateA.getTime();
+    return dateB.getTime() - dateA.getTime();
   });
 
   return gamesWithParticipants;
 }
+
 
 export default async function Page() {
   const authRequest = auth.handleRequest("GET", context);
