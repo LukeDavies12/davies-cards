@@ -3,6 +3,7 @@ import Link from "next/link";
 import { heartsColumns } from "../heartsParticipants/columns";
 import { HeartsDataTable } from "../heartsParticipants/data-table";
 import dynamic from "next/dynamic";
+import { Participant } from "@prisma/client";
 const ParticipantChart = dynamic(() => import('../../components/charts/mainCharts'), { ssr: false });
 
 async function getHeartsParticipants() {
@@ -31,7 +32,7 @@ async function getHeartsParticipants() {
     },
   });
 
-  let participantsWithStats = participants.map((participant) => {
+  let participantsWithStats = participants.map((participant: Participant) => {
     const gamesWon = participant.gamesWon.length;
     const gamesSecondPlace = participant.gamesSecondPlace.length;
     const gamesThirdPlace = participant.gamesThirdPlace.length;
@@ -53,10 +54,10 @@ async function getHeartsParticipants() {
     };
   });
 
-  participantsWithStats = participantsWithStats.filter(participant => participant.gamesPlayed > 0);
+  participantsWithStats = participantsWithStats.filter((p: Participant) => p.gamesPlayed > 0);
 
-  participantsWithStats = participantsWithStats.sort((a, b) => b.percentageWon - a.percentageWon)
-    .map((participant) => ({
+  participantsWithStats = participantsWithStats.sort((a: any, b: any) => b.percentageWon - a.percentageWon)
+    .map((participant: Participant) => ({
       ...participant,
     }));
 
@@ -80,8 +81,8 @@ export default async function Page() {
       <h1 className="text-2xl font-bold">Hearts Leaderboard</h1>
       <div className="py-4 flex flex-col gap-4">
         <ParticipantChart
-          names={hearts.map(participant => participant.name)}
-          winPercentages={hearts.map(participant => participant.percentageWon)}
+          names={hearts.map((p: Participant) => p.name)}
+          winPercentages={hearts.map((p: Participant) => p.percentageWon)}
           height={350}
           width={1000}
         />
