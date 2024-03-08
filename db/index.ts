@@ -1,21 +1,11 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaLibSQL } from "@prisma/adapter-libsql";
+import { createClient } from "@libsql/client";
 
-declare global {
-  // allow global `var` declarations
-  // eslint-disable-next-line no-var
-  var db: PrismaClient;
-}
+const libsql = createClient({
+  url: `${process.env.TURSO_DATABASE_URL}`,
+  authToken: `${process.env.TURSO_AUTH_TOKEN}`,
+});
 
-export const db =
-  global.db ||
-  new PrismaClient({
-    log: ["query"],
-  });
-
-if (process.env.NODE_ENV === "development") {
-  global.db = db;
-}
-
-if (process.env.NODE_ENV === "production") {
-  global.db = db;
-}
+const adapter = new PrismaLibSQL(libsql);
+export const db = new PrismaClient({ adapter });

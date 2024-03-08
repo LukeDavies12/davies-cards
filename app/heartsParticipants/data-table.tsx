@@ -75,7 +75,7 @@ export function HeartsDataTable<TData, TValue>({
 
   const rankColumn: ColumnDef<TData, TValue> = {
     id: "rank",
-    header: "Win % Rank",
+    header: "Rank",
     cell: (info) => <span>{info.row.index + 1}</span>,
   };
 

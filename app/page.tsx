@@ -1,10 +1,13 @@
 import { db } from "@/db";
 import Link from "next/link";
-import { columns } from './participants/columns';
-import { DataTable } from './participants/data-table';
-import dynamic from 'next/dynamic';
+import { columns } from "./participants/columns";
+import { DataTable } from "./participants/data-table";
+import dynamic from "next/dynamic";
 import { Participant } from "@prisma/client";
-const ParticipantChart = dynamic(() => import('../components/charts/mainCharts'), { ssr: false });
+const ParticipantChart = dynamic(
+  () => import("../components/charts/mainCharts"),
+  { ssr: false },
+);
 
 async function getParticipants() {
   const participants = await db.participant.findMany({
@@ -37,10 +40,14 @@ async function getParticipants() {
     const gamesSecondPlace = participant.gamesSecondPlace.length;
     const gamesThirdPlace = participant.gamesThirdPlace.length;
     const gamesPlayed = participant.games.length;
-    const rawTotalPoints = gamesWon * 5 + gamesSecondPlace * 3 + gamesThirdPlace;
-    const totalPoints = (gamesPlayed > 0 ? parseFloat((rawTotalPoints / gamesPlayed).toFixed(1)) : 0) * 10;
+    const rawTotalPoints =
+      gamesWon * 5 + gamesSecondPlace * 3 + gamesThirdPlace;
+    const totalPoints =
+      (gamesPlayed > 0
+        ? parseFloat((rawTotalPoints / gamesPlayed).toFixed(1))
+        : 0) * 10;
     const percentageWon = gamesPlayed > 0 ? (gamesWon / gamesPlayed) * 100 : 0;
-    const percentageWonString = percentageWon.toFixed(1) + '%';
+    const percentageWonString = percentageWon.toFixed(1) + "%";
 
     return {
       ...participant,
@@ -54,7 +61,8 @@ async function getParticipants() {
     };
   });
 
-  participantsWithStats = participantsWithStats.sort((a: any, b: any) => b.percentageWon - a.percentageWon)
+  participantsWithStats = participantsWithStats
+    .sort((a: any, b: any) => b.percentageWon - a.percentageWon)
     .map((participant: Participant) => ({
       ...participant,
     }));
@@ -67,21 +75,41 @@ export default async function Home() {
 
   return (
     <div>
-      <div className="p-1 flex bg bg-neutral-100 rounded-md mb-4">
+      <div className="bg mb-4 flex rounded-md bg-neutral-100 p-1">
         <div className="w-1/2">
-          <Link href={`/`}><div className="w-full flex justify-center py-1 bg-white rounded-md shadow-sm"><span>O-Hell</span></div></Link>
+          <Link href={`/`}>
+            <div className="flex w-full justify-center rounded-md bg-white py-1 shadow-sm">
+              <span>O-Hell</span>
+            </div>
+          </Link>
         </div>
         <div className="w-1/2">
-          <Link href={`/hearts`}><div className="w-full flex justify-center py-1 rounded-md"><span className="text-neutral-500">Hearts</span></div></Link>
+          <Link href={`/hearts`}>
+            <div className="flex w-full justify-center rounded-md py-1">
+              <span className="text-neutral-500">Hearts</span>
+            </div>
+          </Link>
         </div>
       </div>
       <h1 className="text-2xl font-bold">O Hell Leaderboard</h1>
-      <div className="py-4 flex flex-col gap-4">
-        <ParticipantChart names={oHell.map((participant: Participant) => participant.name)} winPercentages={oHell.map((participant: Participant) => participant.percentageWon)} height={350} width={1000} />
+      <div className="flex flex-col gap-4 py-4">
+        <ParticipantChart
+          names={oHell.map((participant: Participant) => participant.name)}
+          winPercentages={oHell.map(
+            (participant: Participant) => participant.percentageWon,
+          )}
+          height={350}
+          width={1000}
+        />
         <DataTable columns={columns} data={oHell} />
       </div>
-      <Link href={`/o-hell/games`} className="font-medium text-primary underline underline-offset-4">Game Log</Link>
+      <Link
+        href={`/o-hell/games`}
+        className="text-primary font-medium underline underline-offset-4"
+      >
+        Game Log
+      </Link>
       <div className="pb-4"></div>
     </div>
-  )
+  );
 }

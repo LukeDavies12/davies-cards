@@ -1,68 +1,68 @@
 generator client {
-  provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+    provider = "sqlite"
+    url      = "file:./dev.db"
 }
 
 model User {
-  id String @id @unique
-  username String
-  name     String?
-  auth_session Session[]
-  key          Key[]
+    id           String    @id @unique
+    username     String
+    name         String?
+    auth_session Session[]
+    key          Key[]
 }
 
 model Session {
-  id             String @id @unique
-  user_id        String
-  active_expires BigInt
-  idle_expires   BigInt
-  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    id             String @id @unique
+    user_id        String
+    active_expires Float
+    idle_expires   Float
+    user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-  @@index([user_id])
+    @@index([user_id])
 }
 
 model Key {
-  id              String  @id @unique
-  hashed_password String?
-  user_id         String
-  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    id              String  @id @unique
+    hashed_password String?
+    user_id         String
+    user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-  @@index([user_id])
+    @@index([user_id])
 }
 
 model Game {
-  id               Int @id @default(autoincrement())
-  date             DateTime
-  participants     Participant[] @relation(name: "GameParticipants")
-  winner           Participant   @relation(name: "GameWinner", fields: [winnerId], references: [id])
-  winnerScore      Int
-  secondPlace      Participant   @relation(name: "GameSecondPlace", fields: [secondPlaceId], references: [id])
-  secondPlaceScore Int
-  thirdPlace       Participant   @relation(name: "GameThirdPlace", fields: [thirdPlaceId], references: [id])
-  thirdPlaceScore  Int
-  gameTypeId       Int
-  winnerId         Int
-  secondPlaceId    Int
-  thirdPlaceId     Int
-  type             GameType      @relation(fields: [gameTypeId], references: [id])
+    id               Int           @id @default(autoincrement())
+    date             DateTime
+    participants     Participant[] @relation(name: "GameParticipants")
+    winner           Participant   @relation(name: "GameWinner", fields: [winnerId], references: [id])
+    winnerScore      Int
+    secondPlace      Participant   @relation(name: "GameSecondPlace", fields: [secondPlaceId], references: [id])
+    secondPlaceScore Int
+    thirdPlace       Participant   @relation(name: "GameThirdPlace", fields: [thirdPlaceId], references: [id])
+    thirdPlaceScore  Int
+    gameTypeId       Int
+    winnerId         Int
+    secondPlaceId    Int
+    thirdPlaceId     Int
+    type             GameType      @relation(fields: [gameTypeId], references: [id])
 }
 
 model Participant {
-  id     Int  @id @default(autoincrement())
-  name   String
-  games  Game[]  @relation(name: "GameParticipants")
-  gamesWon Game[] @relation(name: "GameWinner")
-  gamesSecondPlace Game[] @relation(name: "GameSecondPlace")
-  gamesThirdPlace Game[] @relation(name: "GameThirdPlace")
+    id               Int    @id @default(autoincrement())
+    name             String
+    games            Game[] @relation(name: "GameParticipants")
+    gamesWon         Game[] @relation(name: "GameWinner")
+    gamesSecondPlace Game[] @relation(name: "GameSecondPlace")
+    gamesThirdPlace  Game[] @relation(name: "GameThirdPlace")
 }
 
 model GameType {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  Game Game[]
+    id   Int    @id @default(autoincrement())
+    name String @unique
+    Game Game[]
 }
