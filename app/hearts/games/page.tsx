@@ -1,7 +1,6 @@
 import { db } from "@/db";
 import { heartsColumns } from "../columns";
 import { HeartsDataTable } from "../data-table";
-import { Game } from "@prisma/client";
 
 function formatDate(dateString: string | Date | number) {
   const date = new Date(dateString);
@@ -10,50 +9,61 @@ function formatDate(dateString: string | Date | number) {
   const day = date.getUTCDate(); // Get day of the month (1-31)
   const year = date.getUTCFullYear(); // Get full year in YYYY format
 
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const formattedMonth = monthNames[month]; // Get month name from array
 
   return `${formattedMonth} ${day} '${year.toString().substr(-2)}`;
 }
 
 async function getHeartsGames() {
+  // Fetch games with a specific gameTypeId, and include participants and places.
   const games = await db.game.findMany({
     where: {
-      gameTypeId: 2, // Update to fetch hearts games
+      gameTypeId: 2, // Hearts games
     },
     include: {
-      participants: true,
-      winner: true, // Include the winner
-      secondPlace: true, // Include the second place
-      thirdPlace: true, // Include the third place
+      participants: true, // Include all participants of the game
+      winner: true, // Include the winner of the game
+      secondPlace: true, // Include the second-place participant
+      thirdPlace: true, // Include the third-place participant
     },
-  })
-
-  let gamesWithParticipants = games.map((game: Game) => {
-    return {
-      ...game,
-      participants: game.participants.map((participant: { name?: string }) => participant.name).filter((name: any) => name).join(', '),
-      winner: game.winner?.name || '', // Convert to string
-      secondPlace: game.secondPlace?.name || '', // Convert to string
-      thirdPlace: game.thirdPlace?.name || '', // Convert to string
-      dateString: formatDate(game.date), // Assuming formatDate is already defined
-    };
   });
 
-  // Sort games by date
-  gamesWithParticipants.sort((a: any, b: any) => {
-    const dateA = new Date(a.dateString);
-    const dateB = new Date(b.dateString);
-    return dateB.getTime() - dateA.getTime();
-  });
+  let gamesWithFormattedDetails = games.map((game) => ({
+    ...game,
+    participants: game.participants.map((p) => p.name).join(", "), // Concatenate participant names
+    winner: game.winner?.name || "",
+    secondPlace: game.secondPlace?.name || "",
+    thirdPlace: game.thirdPlace?.name || "",
+    dateString: formatDate(game.date),
+  }));
 
-  return gamesWithParticipants;
+  // Sort games by date, assuming dateString is in a sortable format
+  gamesWithFormattedDetails.sort(
+    (a, b) =>
+      new Date(b.dateString).getTime() - new Date(a.dateString).getTime(),
+  );
+
+  return gamesWithFormattedDetails;
 }
 
-
-export default async function Page() {
+export async function Page() {
   const data = await getHeartsGames();
 
+  // Assuming HeartsDataTable and heartsColumns are defined elsewhere in your codebase.
   return (
     <div>
       <h1 className="text-2xl font-bold">Hearts Games</h1>
@@ -61,5 +71,5 @@ export default async function Page() {
         <HeartsDataTable columns={heartsColumns} data={data} />
       </div>
     </div>
-  )
+  );
 }
