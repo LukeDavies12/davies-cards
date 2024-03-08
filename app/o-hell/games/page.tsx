@@ -1,7 +1,6 @@
 import { db } from "@/db";
 import { columns } from "../columns";
 import { DataTable } from "../data-table";
-import { Game } from "@prisma/client";
 
 function formatDate(dateString: string | Date | number) {
   const date = new Date(dateString);

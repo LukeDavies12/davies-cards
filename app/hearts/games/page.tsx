@@ -60,7 +60,7 @@ async function getHeartsGames() {
   return gamesWithFormattedDetails;
 }
 
-export async function Page() {
+export default async function Page() {
   const data = await getHeartsGames();
 
   // Assuming HeartsDataTable and heartsColumns are defined elsewhere in your codebase.
