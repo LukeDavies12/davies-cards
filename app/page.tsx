@@ -35,7 +35,7 @@ async function getParticipants() {
     },
   });
 
-  let participantsWithStats = participants.map((participant: Participant) => {
+  let participantsWithStats = participants.map((participant) => {
     const gamesWon = participant.gamesWon.length;
     const gamesSecondPlace = participant.gamesSecondPlace.length;
     const gamesThirdPlace = participant.gamesThirdPlace.length;
@@ -63,7 +63,7 @@ async function getParticipants() {
 
   participantsWithStats = participantsWithStats
     .sort((a: any, b: any) => b.percentageWon - a.percentageWon)
-    .map((participant: Participant) => ({
+    .map((participant) => ({
       ...participant,
     }));
 
@@ -95,9 +95,7 @@ export default async function Home() {
       <div className="flex flex-col gap-4 py-4">
         <ParticipantChart
           names={oHell.map((participant: Participant) => participant.name)}
-          winPercentages={oHell.map(
-            (participant: Participant) => participant.percentageWon,
-          )}
+          winPercentages={oHell.map((participant) => participant.percentageWon)}
           height={350}
           width={1000}
         />
