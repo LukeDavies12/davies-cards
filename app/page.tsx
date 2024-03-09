@@ -1,9 +1,16 @@
 import { db } from "@/db";
 import Link from "next/link";
-import { ParticipantWithStats, columns } from "./participants/columns";
+import { columns } from "./participants/columns";
 import { DataTable } from "./participants/data-table";
-import { Participant } from "@prisma/client";
+import { Game, Participant as PrismaParticipant } from "@prisma/client";
 import SwitchCharts from "@/components/participants/SwitchCharts";
+
+interface ExtendedParticipant extends PrismaParticipant {
+  gamesWon: Game[];
+  gamesSecondPlace: Game[];
+  gamesThirdPlace: Game[];
+  games: Game[];
+}
 
 async function getParticipants() {
   const participants = await db.participant.findMany({
@@ -31,31 +38,34 @@ async function getParticipants() {
     },
   });
 
-  let participantsWithStats = participants.map((participant: Participant) => {
-    const gamesWon = participant.gamesWon.length;
-    const gamesSecondPlace = participant.gamesSecondPlace.length;
-    const gamesThirdPlace = participant.gamesThirdPlace.length;
-    const gamesPlayed = participant.games.length;
-    const rawTotalPoints =
-      gamesWon * 5 + gamesSecondPlace * 3 + gamesThirdPlace;
-    const totalPoints =
-      (gamesPlayed > 0
-        ? parseFloat((rawTotalPoints / gamesPlayed).toFixed(1))
-        : 0) * 10;
-    const percentageWon = gamesPlayed > 0 ? (gamesWon / gamesPlayed) * 100 : 0;
-    const percentageWonString = percentageWon.toFixed(1) + "%";
+  let participantsWithStats = participants.map(
+    (participant: ExtendedParticipant) => {
+      const gamesWon = participant.gamesWon.length;
+      const gamesSecondPlace = participant.gamesSecondPlace.length;
+      const gamesThirdPlace = participant.gamesThirdPlace.length;
+      const gamesPlayed = participant.games.length;
+      const rawTotalPoints =
+        gamesWon * 5 + gamesSecondPlace * 3 + gamesThirdPlace;
+      const totalPoints =
+        (gamesPlayed > 0
+          ? parseFloat((rawTotalPoints / gamesPlayed).toFixed(1))
+          : 0) * 10;
+      const percentageWon =
+        gamesPlayed > 0 ? (gamesWon / gamesPlayed) * 100 : 0;
+      const percentageWonString = percentageWon.toFixed(1) + "%";
 
-    return {
-      ...participant,
-      gamesPlayed,
-      gamesWon,
-      gamesSecondPlace,
-      gamesThirdPlace,
-      percentageWonString,
-      percentageWon,
-      totalPoints,
-    };
-  });
+      return {
+        ...participant,
+        gamesPlayed,
+        gamesWon,
+        gamesSecondPlace,
+        gamesThirdPlace,
+        percentageWonString,
+        percentageWon,
+        totalPoints,
+      };
+    },
+  );
 
   participantsWithStats = participantsWithStats
     .sort((a: any, b: any) => b.percentageWon - a.percentageWon)
