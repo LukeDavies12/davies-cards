@@ -2,12 +2,8 @@ import { db } from "@/db";
 import Link from "next/link";
 import { columns } from "./participants/columns";
 import { DataTable } from "./participants/data-table";
-import dynamic from "next/dynamic";
 import { Participant } from "@prisma/client";
-const ParticipantChart = dynamic(
-  () => import("../components/charts/mainCharts"),
-  { ssr: false },
-);
+import SwitchCharts from "@/components/participants/SwitchCharts";
 
 async function getParticipants() {
   const participants = await db.participant.findMany({
@@ -93,11 +89,13 @@ export default async function Home() {
       </div>
       <h1 className="text-2xl font-bold">O Hell Leaderboard</h1>
       <div className="flex flex-col gap-4 py-4">
-        <ParticipantChart
-          names={oHell.map((participant: Participant) => participant.name)}
+        <SwitchCharts
+          percNames={oHell.map((participant: Participant) => participant.name)}
           winPercentages={oHell.map((participant) => participant.percentageWon)}
-          height={350}
-          width={1000}
+          pointsNames={oHell.map(
+            (participant: Participant) => participant.name,
+          )}
+          points={oHell.map((participant) => participant.totalPoints)}
         />
         <DataTable columns={columns} data={oHell} />
       </div>
