@@ -105,12 +105,21 @@ export default async function Page() {
         />
         <HeartsDataTable columns={heartsColumns} data={hearts} />
       </div>
-      <Link
-        href={`/hearts/games`}
-        className="text-primary font-medium underline underline-offset-4"
-      >
-        Game Log
-      </Link>
+      <div className="flex flex-col gap-4">
+        <Link
+          href={`/hearts/games`}
+          className="text-primary font-medium underline underline-offset-4"
+        >
+          Game Log
+        </Link>
+        <Link
+          href={`/admin`}
+          className="font-medium text-neutral-500 underline underline-offset-4"
+        >
+          Admin Page
+        </Link>
+      </div>
+      <div className="pb-4"></div>
     </div>
   );
 }

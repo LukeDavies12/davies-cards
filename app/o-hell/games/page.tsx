@@ -41,10 +41,10 @@ async function getGames() {
     },
   });
 
-  let gamesWithParticipants = games.map((game) => {
+  let gamesWithParticipants = games.map((game: any) => {
     return {
       ...game,
-      participants: game.participants.map((p) => p.name).join(", "), // Concatenate participant names
+      participants: game.participants.map((p: any) => p.name).join(", "), // Concatenate participant names
       winner: game.winner?.name || "", // Convert to string
       secondPlace: game.secondPlace?.name || "", // Convert to string
       thirdPlace: game.thirdPlace?.name || "", // Convert to string

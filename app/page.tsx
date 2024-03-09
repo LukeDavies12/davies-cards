@@ -35,7 +35,7 @@ async function getParticipants() {
     },
   });
 
-  let participantsWithStats = participants.map((participant) => {
+  let participantsWithStats = participants.map((participant: any) => {
     const gamesWon = participant.gamesWon.length;
     const gamesSecondPlace = participant.gamesSecondPlace.length;
     const gamesThirdPlace = participant.gamesThirdPlace.length;
@@ -101,12 +101,20 @@ export default async function Home() {
         />
         <DataTable columns={columns} data={oHell} />
       </div>
-      <Link
-        href={`/o-hell/games`}
-        className="text-primary font-medium underline underline-offset-4"
-      >
-        Game Log
-      </Link>
+      <div className="flex flex-col gap-4">
+        <Link
+          href={`/o-hell/games`}
+          className="text-primary font-medium underline underline-offset-4"
+        >
+          Game Log
+        </Link>
+        <Link
+          href={`/admin`}
+          className="font-medium text-neutral-500 underline underline-offset-4"
+        >
+          Admin Page
+        </Link>
+      </div>
       <div className="pb-4"></div>
     </div>
   );

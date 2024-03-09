@@ -4,7 +4,6 @@ import * as context from "next/headers";
 import { redirect } from "next/navigation";
 import { GamesWithParticipantsandType, columns } from "./columns";
 import { DataTable } from "./data-table";
-import { Game } from "@prisma/client";
 
 function formatDate(dateString: string | Date | number) {
   const date = new Date(dateString);
