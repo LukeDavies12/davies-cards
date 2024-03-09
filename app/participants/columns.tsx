@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Participant } from "@prisma/client"
-import { ColumnDef, FilterFnOption } from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Participant } from "@prisma/client";
+import { ColumnDef, FilterFnOption } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
 
 export type ParticipantWithStats = Participant & {
   gamesPlayed: number;
@@ -13,7 +13,7 @@ export type ParticipantWithStats = Participant & {
   percentageWon: number;
   percentageWonString: string;
   totalPoints: number;
-}
+};
 
 export const columns: ColumnDef<ParticipantWithStats>[] = [
   {
@@ -27,14 +27,28 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
-          className="italic font-medium"
+          className="font-medium italic"
         >
           Win %
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
-    cell: info => info.row.original.percentageWonString
+    cell: (info) => info.row.original.percentageWonString,
+  },
+  {
+    accessorKey: "totalPoints",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
+        >
+          Normalized Points
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "gamesWon",
@@ -47,7 +61,7 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
           Games Won
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
   },
   {
@@ -61,7 +75,7 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
           Games 2nd Place
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
   },
   {
@@ -75,12 +89,12 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
           Games 3rd Place
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
   },
   {
     accessorKey: "gamesPlayed",
-    filterFn: 'greaterThan' as FilterFnOption<ParticipantWithStats>,
+    filterFn: "greaterThan" as FilterFnOption<ParticipantWithStats>,
     header: ({ column }) => {
       return (
         <Button
@@ -90,21 +104,7 @@ export const columns: ColumnDef<ParticipantWithStats>[] = [
           Games Played
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
   },
-  {
-    accessorKey: "totalPoints",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() !== "desc")}
-        >
-          Normalized Points
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-]
+];

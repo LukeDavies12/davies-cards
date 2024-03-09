@@ -76,7 +76,7 @@ export function DataTable<TData, TValue>({
 
   const rankColumn: ColumnDef<TData, TValue> = {
     id: "rank",
-    header: "Rank",
+    header: "Win % Rank",
     cell: (info) => <span>{info.row.index + 1}</span>,
   };
 
