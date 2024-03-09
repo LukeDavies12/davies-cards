@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import Link from "next/link";
-import { columns } from "./participants/columns";
+import { ParticipantWithStats, columns } from "./participants/columns";
 import { DataTable } from "./participants/data-table";
 import { Participant } from "@prisma/client";
 import SwitchCharts from "@/components/participants/SwitchCharts";
@@ -31,7 +31,7 @@ async function getParticipants() {
     },
   });
 
-  let participantsWithStats = participants.map((participant: any) => {
+  let participantsWithStats = participants.map((participant: Participant) => {
     const gamesWon = participant.gamesWon.length;
     const gamesSecondPlace = participant.gamesSecondPlace.length;
     const gamesThirdPlace = participant.gamesThirdPlace.length;
