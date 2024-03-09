@@ -2,7 +2,6 @@ import { db } from "@/db";
 import Link from "next/link";
 import { heartsColumns } from "../heartsParticipants/columns";
 import { HeartsDataTable } from "../heartsParticipants/data-table";
-import dynamic from "next/dynamic";
 import { Participant } from "@prisma/client";
 import SwitchCharts from "@/components/participants/SwitchCharts";
 
