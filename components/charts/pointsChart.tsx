@@ -72,9 +72,16 @@ const ParticipantChart: FunctionComponent<BarChartProps> = ({
           tickLine={false}
         />
         <Tooltip
-          content={<CustomTooltip />}
+          content={(props) => (
+            <CustomTooltip
+              active={undefined}
+              payload={undefined}
+              label={undefined}
+            />
+          )}
           cursor={{ fill: "rgba(255,255,255,0.1)" }}
         />
+
         <Legend verticalAlign="top" wrapperStyle={{ lineHeight: "40px" }} />
         <Bar
           dataKey="points"
