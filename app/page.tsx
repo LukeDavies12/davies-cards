@@ -2,7 +2,11 @@ import { db } from "@/db";
 import Link from "next/link";
 import { columns } from "./participants/columns";
 import { DataTable } from "./participants/data-table";
-import { Game, Participant as PrismaParticipant } from "@prisma/client";
+import {
+  Game,
+  Participant as PrismaParticipant,
+  Participant,
+} from "@prisma/client";
 import SwitchCharts from "@/components/participants/SwitchCharts";
 
 interface ExtendedParticipant extends PrismaParticipant {
