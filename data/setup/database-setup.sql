@@ -43,12 +43,8 @@ CREATE TABLE player_score(
 
 CREATE INDEX idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX idx_sessions_expires_at ON sessions(expires_at);
-
 CREATE INDEX idx_player_score_game_id ON player_score(game_id);
 CREATE INDEX idx_player_score_player_id ON player_score(player_id);
-
 CREATE INDEX idx_player_is_active ON player(is_active);
-
 CREATE INDEX idx_game_date ON game(date);
-
 CREATE INDEX idx_player_score_player_game ON player_score(player_id, game_id);

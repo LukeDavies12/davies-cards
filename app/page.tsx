@@ -1,7 +1,11 @@
 import Leaderboards from "@/sections/leaderboards/leaderboards";
+import TopScore from "@/sections/top-score/top-score";
 
 export default function Home() {
   return (
-    <Leaderboards />
+    <>
+      <Leaderboards />
+      <TopScore />
+    </>
   );
 }

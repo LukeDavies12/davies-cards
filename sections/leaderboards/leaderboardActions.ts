@@ -1,4 +1,5 @@
-'use server';
+'use server'
+
 import { sql, toCamel } from '@/data/db';
 
 export interface PlayerWinStatsDTO {
@@ -18,7 +19,7 @@ export async function getWinStatsData(filters: {
   const sortKey = filters.sortKey || 'win_percentage';
   const sortDirection = filters.sortDirection || 'desc';
 
-  // Convert camelCase to snake_case
+  // camelCase to snake_case
   const snakeCase = sortKey.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 
   const query = `SELECT * FROM get_player_stats($1, $2, $3)`;
