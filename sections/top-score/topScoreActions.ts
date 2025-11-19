@@ -1,6 +1,7 @@
 'use server';
 
 import { sql, toCamel } from '@/data/db';
+import { cache } from 'react';
 
 export interface TopScoreByPlayerCountDTO {
   playerCount: number;
@@ -13,9 +14,7 @@ export interface TopScoreByPlayerCountDTO {
   rank: number;
 }
 
-export async function getTopScoresByPlayerCount(): Promise<TopScoreByPlayerCountDTO[]> {
-  'use cache';
-
+async function _getTopScoresByPlayerCount(): Promise<TopScoreByPlayerCountDTO[]> {
   const query = `SELECT * FROM get_top_scores_by_player_count()`;
   const rows = await sql.query(query);
   return rows.map((row) => {
@@ -27,4 +26,6 @@ export async function getTopScoresByPlayerCount(): Promise<TopScoreByPlayerCount
     return camelRow as TopScoreByPlayerCountDTO;
   });
 }
+
+export const getTopScoresByPlayerCount = cache(_getTopScoresByPlayerCount);
 

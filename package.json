@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "create-user": "tsx scripts/create-first-user.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
+    "@oslojs/crypto": "^1.0.0",
+    "@oslojs/encoding": "^1.0.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.553.0",
     "next": "16.0.1",
@@ -25,6 +28,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "tailwindcss": "^4",
+    "tsx": "^4.7.0",
     "typescript": "^5"
   }
 }

@@ -88,8 +88,8 @@ export default function TopScore() {
   })
 
   return (
-    <div className="mt-8 overflow-y-auto max-h-[600px]">
-      <h1 className="text-xl font-bold mb-4">Top Score by # of Players</h1>
+    <div className="mt-12 overflow-y-auto max-h-[600px]">
+      <h1 className="text-base font-bold mb-4">Top Score by # of Players</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {groupedScores.map((group) => (
           <div key={group.playerCount}>
@@ -100,14 +100,14 @@ export default function TopScore() {
               {group.scores.map((scoreItem, index) => (
                 <div key={index} className="flex items-start justify-between gap-2 text-sm">
                   <div className="flex-1 min-w-0">
-                    <div className="text-neutral-700 font-medium truncate">
+                    <div className="text-neutral-900 truncate">
                       {scoreItem.players.join(" / ")}
                     </div>
                     <div className="text-neutral-900 text-xs truncate">
                       {formatDate(scoreItem.gameDate)} <span className="text-neutral-500">{scoreItem.gameLocation}</span>
                     </div>
                   </div>
-                  <div className="text-neutral-900 font-semibold whitespace-nowrap">
+                  <div className="text-neutral-700 whitespace-nowrap">
                     {scoreItem.score}
                   </div>
                 </div>
