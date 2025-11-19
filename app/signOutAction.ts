@@ -7,6 +7,5 @@ import { redirect } from 'next/navigation';
 export async function signOut() {
   await deleteSession();
   revalidatePath('/', 'layout');
-  revalidatePath('/', 'page');
   redirect('/');
 }
