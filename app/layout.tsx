@@ -1,4 +1,3 @@
-import SignOutButton from "@/components/sign-out-button";
 import { getCurrentSession } from "@/lib/auth";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -6,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import "./globals.css";
+import NavClient from "./nav-client";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,37 +20,8 @@ export const metadata: Metadata = {
 async function Nav() {
   const { session, user } = await getCurrentSession();
 
-  if (session && user) {
-    return (
-      <nav className="flex items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center">
-          <Image src="/davies-cards.svg" height={40} width={40} alt="Logo" className="w-12" />
-          <span className="text-red-700 font-bold ml-1">Davies Cards</span>
-        </Link>
-        <div className="flex items-center gap-3">
-          <span className="text-neutral-700">{user.name}</span>
-          <SignOutButton />
-        </div>
-      </nav>
-    );
-  }
-
-  return (
-    <nav className="flex items-center justify-between px-4 py-3">
-      <Link href="/" className="flex items-center">
-        <Image src="/davies-cards.svg" height={40} width={40} alt="Logo" className="w-12" />
-        <span className="text-red-700 font-bold ml-1">Davies Cards</span>
-      </Link>
-      <div>
-        <Link
-          href="/login"
-          className="bg-neutral-100 rounded-lg text-neutral-700 px-5 py-1.5 hover:bg-neutral-200 active:bg-neutral-300 active:text-neutral-800 transition-colors"
-        >
-          Sign in to log game
-        </Link>
-      </div>
-    </nav>
-  );
+  // Pass the user name to the client component
+  return <NavClient userName={user?.name} />;
 }
 
 export default function RootLayout({
