@@ -148,7 +148,7 @@ export default function Leaderboard() {
             type="number"
             value={inputValue}
             onChange={(e) => handleInputChange(e.target.value)}
-            className="w-16 px-2 py-1 text-sm bg-neutral-100 rounded-xs hover:bg-neutral-200 focus:bg-neutral-300 focus:outline-none transition-colors ease-linear duration-100"
+            className="w-16 px-2 py-1 text-sm bg-neutral-100 rounded-md hover:bg-neutral-200 focus:bg-neutral-300 focus:outline-none transition-colors ease-linear duration-100"
             min="0"
           />
         </div>

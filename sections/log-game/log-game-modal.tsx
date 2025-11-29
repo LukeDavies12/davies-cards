@@ -1,5 +1,7 @@
 'use client';
 
+import BaseInput from '@/components/base-input';
+import BaseTextarea from '@/components/base-textarea';
 import { createPlayer, getActivePlayers, getLocations, logGame, type PlayerDTO } from '@/sections/game-log/gameLogActions';
 import { Check, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -273,30 +275,27 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80" onClick={onClose}>
-        <div className="bg-white rounded-xs shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold">Log Game</h2>
+        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="p-5">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold">Log Game</h2>
               <button
                 onClick={onClose}
                 className="text-neutral-500 hover:text-neutral-700 cursor-pointer"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="date" className="block text-sm font-medium text-neutral-700 mb-1">
-                  Date *
-                </label>
-                <input
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Date *</label>
+                <BaseInput
                   type="date"
                   id="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-xs focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
 
@@ -305,7 +304,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
                   Location *
                 </label>
                 <div ref={locationRef} className="relative">
-                  <input
+                  <BaseInput
                     type="text"
                     id="location"
                     value={locationSearch}
@@ -317,16 +316,15 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
                     onFocus={() => setShowLocationDropdown(true)}
                     required
                     placeholder="e.g., Yorkville, IL"
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-xs focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                   {showLocationDropdown && (locationMatches.length > 0 || showCreateNew) && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-neutral-300 rounded-xs shadow-lg max-h-60 overflow-y-auto">
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-neutral-200 rounded-xs shadow-md max-h-60 overflow-y-auto">
                       {locationMatches.map((loc) => (
                         <button
                           key={loc}
                           type="button"
                           onClick={() => handleLocationSelect(loc)}
-                          className="w-full text-left px-3 py-2 hover:bg-neutral-100 text-sm"
+                          className="w-full text-left px-2 py-1.5 hover:bg-neutral-100 text-sm"
                         >
                           {loc}
                         </button>
@@ -349,13 +347,12 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
                 <label htmlFor="message" className="block text-sm font-medium text-neutral-700 mb-1">
                   Message
                 </label>
-                <textarea
+                <BaseTextarea
                   id="message"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="e.g., Game description and commentary"
                   rows={3}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-xs focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                  placeholder="e.g., Game description and commentary"
                 />
               </div>
 
@@ -363,14 +360,13 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
                 <label htmlFor="scores" className="block text-sm font-medium text-neutral-700 mb-1">
                   Player Scores *
                 </label>
-                <textarea
+                <BaseTextarea
                   id="scores"
                   value={scoresText}
                   onChange={(e) => handleScoresTextChange(e.target.value)}
                   required
-                  placeholder="Jake 133 Claire 144 Sophia 140"
                   rows={3}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-xs focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                  placeholder="Jake 133 Claire 144 Sophia 140"
                 />
                 <p className="text-xs text-neutral-500 mt-1">
                   Enter player names and scores separated by spaces (e.g., "Jake 123 Claire 144")
@@ -378,7 +374,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
               </div>
 
               {parsedScores.length > 0 && (
-                <div className="border border-neutral-200 rounded-xs p-4 bg-neutral-50">
+                <div className="border border-neutral-200 rounded-md p-4 bg-neutral-50">
                   <h3 className="text-sm font-medium text-neutral-700 mb-2">Parsed Scores:</h3>
                   <div className="space-y-2">
                     {parsedScores.map((parsed, index) => (
@@ -404,7 +400,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
               )}
 
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xs text-sm">
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
                   {error}
                 </div>
               )}
@@ -413,14 +409,14 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 border border-neutral-300 rounded-xs text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer"
+                  className="px-4 py-2 border border-neutral-300 rounded-md text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!canSubmit || submitting}
-                  className="px-4 py-2 bg-red-700 text-white rounded-xs hover:bg-red-800 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  className="px-4 py-2 bg-red-700 text-white rounded-md hover:bg-red-800 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
                   {submitting ? 'Logging...' : 'Log Game'}
                 </button>

@@ -1,13 +1,15 @@
 'use client';
 
 import { signIn } from '@/app/login/loginAction';
+import BaseInput from '@/components/base-input';
 import BrandButton from '@/components/brand-button';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -23,9 +25,10 @@ export default function LoginPage() {
       if (result.error) {
         setError(result.error);
       } else {
+        router.push('/');
         router.refresh();
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -37,37 +40,35 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-2 py-1 text-sm border-b border-neutral-300 focus:outline-none focus:border-neutral-900"
-                placeholder="mail@google.com"
-              />
-            </div>
-            <div>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-2 py-1 text-sm border-b border-neutral-300 focus:outline-none focus:border-neutral-900"
-                placeholder="********"
-              />
-            </div>
+            <BaseInput
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="mail@google.com"
+            />
+
+            <BaseInput
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="********"
+            />
+
             {error && (
               <div className="text-sm text-red-600">{error}</div>
             )}
+
             <BrandButton type="submit" disabled={isLoading} className="w-full">
               {isLoading ? 'Signing in...' : 'Sign In'}
             </BrandButton>
           </form>
         </div>
       </div>
+
       <div className="hidden md:block w-[50%] relative mt-8">
         <Image
           src="/login.avif"
@@ -80,4 +81,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
