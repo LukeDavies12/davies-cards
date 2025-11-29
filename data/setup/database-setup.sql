@@ -27,8 +27,6 @@ CREATE TABLE game(
   date DATE NOT NULL,
   location VARCHAR(255) NOT NULL,
   message VARCHAR(1000),
-  score_image_url VARCHAR(1000),
-  game_image_url VARCHAR(1000)
 );
 
 CREATE TABLE player_score(
