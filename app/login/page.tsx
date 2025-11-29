@@ -10,7 +10,7 @@ import { useState } from 'react';
 export default function LoginPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('daviesfamcards@google.com');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +46,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="mail@google.com"
+              placeholder="daviesfamcards@google.com"
             />
 
             <BaseInput
