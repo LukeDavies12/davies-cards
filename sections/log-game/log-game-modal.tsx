@@ -3,7 +3,7 @@
 import BaseInput from '@/components/base-input';
 import BaseTextarea from '@/components/base-textarea';
 import { createPlayer, getActivePlayers, getLocations, logGame, type PlayerDTO } from '@/sections/game-log/gameLogActions';
-import { Check, X } from 'lucide-react';
+import { Check, Info, Plus, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
@@ -103,8 +103,11 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
   const [scoresText, setScoresText] = useState('');
   const [parsedScores, setParsedScores] = useState<ParsedPlayerScore[]>([]);
   const [createPlayerModal, setCreatePlayerModal] = useState<{ isOpen: boolean; playerName: string }>({ isOpen: false, playerName: '' });
+  const [showPlayerList, setShowPlayerList] = useState(false);
+  const [playersLoaded, setPlayersLoaded] = useState(false);
 
   const locationRef = useRef<HTMLDivElement>(null);
+  const playerListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -118,6 +121,8 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
       setScoresText('');
       setParsedScores([]);
       setError(null);
+      setShowPlayerList(false);
+      // Don't reset playersLoaded - keep the cache for next time modal opens
     }
   }, [isOpen]);
 
@@ -126,21 +131,33 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
       if (locationRef.current && !locationRef.current.contains(event.target as Node)) {
         setShowLocationDropdown(false);
       }
+      if (playerListRef.current && !playerListRef.current.contains(event.target as Node)) {
+        setShowPlayerList(false);
+      }
     }
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  async function loadData() {
+  async function loadData(reloadPlayers: boolean = false) {
     setLoading(true);
     try {
-      const [activePlayers, gameLocations] = await Promise.all([
-        getActivePlayers(),
-        getLocations()
-      ]);
-      setPlayers(activePlayers);
-      setLocations(gameLocations);
+      // Only reload players if explicitly requested (e.g., after creating a new player)
+      // or if they haven't been loaded yet
+      if (reloadPlayers || !playersLoaded) {
+        const [activePlayers, gameLocations] = await Promise.all([
+          getActivePlayers(),
+          getLocations()
+        ]);
+        setPlayers(activePlayers);
+        setLocations(gameLocations);
+        setPlayersLoaded(true);
+      } else {
+        // Just reload locations, keep cached players
+        const gameLocations = await getLocations();
+        setLocations(gameLocations);
+      }
     } catch (err) {
       setError('Failed to load data');
     } finally {
@@ -148,7 +165,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
     }
   }
 
-  function parseScoresText(text: string): ParsedPlayerScore[] {
+  function parseScoresText(text: string, playersList: PlayerDTO[] = players): ParsedPlayerScore[] {
     if (!text.trim()) {
       return [];
     }
@@ -165,7 +182,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
 
       if (name && !isNaN(score)) {
         // Try to match player (case-insensitive, partial match)
-        const matchedPlayer = players.find(
+        const matchedPlayer = playersList.find(
           p => p.name.toLowerCase() === name.toLowerCase() ||
             p.name.toLowerCase().includes(name.toLowerCase()) ||
             name.toLowerCase().includes(p.name.toLowerCase())
@@ -182,9 +199,9 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
     return matches;
   }
 
-  function handleScoresTextChange(text: string) {
+  function handleScoresTextChange(text: string, playersList?: PlayerDTO[]) {
     setScoresText(text);
-    const parsed = parseScoresText(text);
+    const parsed = parseScoresText(text, playersList);
     setParsedScores(parsed);
   }
 
@@ -207,12 +224,30 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
   async function handleCreatePlayer(playerName: string) {
     const result = await createPlayer(playerName);
     if (result.success && result.player) {
-      // Reload players and re-parse scores
-      await loadData();
+      // Reload players (force reload) and re-parse scores
+      await loadData(true);
       handleScoresTextChange(scoresText);
       setCreatePlayerModal({ isOpen: false, playerName: '' });
     } else {
       throw new Error(result.error || 'Failed to create player');
+    }
+  }
+
+  async function handleQuickCreatePlayer(playerName: string) {
+    const result = await createPlayer(playerName);
+    if (result.success && result.player) {
+      // Reload players (force reload) and re-parse scores with updated players list
+      const [activePlayers, gameLocations] = await Promise.all([
+        getActivePlayers(),
+        getLocations()
+      ]);
+      setPlayers(activePlayers);
+      setLocations(gameLocations);
+      setPlayersLoaded(true);
+      // Re-parse scores with the updated players list
+      handleScoresTextChange(scoresText, activePlayers);
+    } else {
+      setError(result.error || 'Failed to create player');
     }
   }
 
@@ -289,7 +324,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Date *</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Date</label>
                 <BaseInput
                   type="date"
                   id="date"
@@ -301,7 +336,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
 
               <div>
                 <label htmlFor="location" className="block text-sm font-medium text-neutral-700 mb-1">
-                  Location *
+                  Location
                 </label>
                 <div ref={locationRef} className="relative">
                   <BaseInput
@@ -318,7 +353,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
                     placeholder="e.g., Yorkville, IL"
                   />
                   {showLocationDropdown && (locationMatches.length > 0 || showCreateNew) && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-neutral-200 rounded-xs shadow-md max-h-60 overflow-y-auto">
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-neutral-200 rounded-md shadow-md max-h-60 overflow-y-auto">
                       {locationMatches.map((loc) => (
                         <button
                           key={loc}
@@ -333,7 +368,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
                         <button
                           type="button"
                           onClick={() => handleLocationSelect(locationSearch)}
-                          className="w-full text-left px-3 py-2 hover:bg-neutral-100 text-sm text-red-700 font-medium border-t border-neutral-200"
+                          className="w-full text-left rounded-md px-3 py-2 hover:bg-neutral-100 text-sm text-red-700 font-medium border-t border-neutral-200"
                         >
                           + Create "{locationSearch}"
                         </button>
@@ -357,9 +392,60 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
               </div>
 
               <div>
-                <label htmlFor="scores" className="block text-sm font-medium text-neutral-700 mb-1">
-                  Player Scores *
-                </label>
+                <div className="flex items-center gap-2 mb-1">
+                  <label htmlFor="scores" className="block text-sm font-medium text-neutral-700">
+                    Player Scores
+                  </label>
+                  <div className="relative" ref={playerListRef}>
+                    <button
+                      type="button"
+                      onClick={() => setShowPlayerList(!showPlayerList)}
+                      className="text-neutral-500 hover:text-neutral-700 transition-colors flex items-center gap-1"
+                      title="View player names on site"
+                    >
+                      <Info size={16} />
+                      <span className="text-xs">(view player names on site)</span>
+                    </button>
+                    {showPlayerList && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-[60]!important bg-black/20"
+                          onClick={() => setShowPlayerList(false)}
+                        />
+                        <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-70 bg-white border border-neutral-200 rounded-md shadow-lg w-[90vw] max-w-sm max-h-[60vh] overflow-y-auto">
+                          <div className="p-3 border-b border-neutral-200 sticky top-0 bg-white">
+                            <div className="flex items-center justify-between">
+                              <h4 className="text-sm font-medium text-neutral-700">Active Players</h4>
+                              <button
+                                type="button"
+                                onClick={() => setShowPlayerList(false)}
+                                className="text-neutral-500 hover:text-neutral-700"
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          </div>
+                          <div className="p-2">
+                            {players.length === 0 ? (
+                              <p className="text-xs text-neutral-500 py-2">No active players</p>
+                            ) : (
+                              <div className="space-y-1">
+                                {players.map((player) => (
+                                  <div
+                                    key={player.id}
+                                    className="text-sm text-neutral-700 px-2 py-1.5 rounded-md hover:bg-neutral-50"
+                                  >
+                                    {player.name}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
                 <BaseTextarea
                   id="scores"
                   value={scoresText}
@@ -388,10 +474,14 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
                             {parsed.matchedPlayer.name}
                           </span>
                         ) : (
-                          <span className="text-red-700 text-xs flex items-center gap-1">
-                            <X size={14} />
-                            No match
-                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleQuickCreatePlayer(parsed.name)}
+                            className="text-xs px-2 py-1 bg-red-700 text-white rounded-md hover:bg-red-800 transition-colors flex items-center gap-1"
+                          >
+                            <Plus size={14} />
+                            Add Player
+                          </button>
                         )}
                       </div>
                     ))}
