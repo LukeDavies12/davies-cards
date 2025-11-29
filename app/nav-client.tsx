@@ -48,7 +48,7 @@ export default function NavClient({ userName }: NavClientProps) {
       <div>
         <Link
           href="/login"
-          className="bg-neutral-100 rounded-lg text-neutral-700 px-5 py-1.5 hover:bg-neutral-200 active:bg-neutral-300 active:text-neutral-800 transition-colors"
+          className="bg-neutral-100 rounded-lg text-neutral-700 px-5 py-1.5 hover:bg-neutral-200 active:bg-neutral-300 active:text-neutral-800 transition-colors duration-100 ease-linear"
         >
           Sign in to log game
         </Link>

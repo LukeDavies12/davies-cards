@@ -47,16 +47,17 @@ export default function GameLog() {
       <h1 className="text-base font-bold mb-4">Game Log</h1>
       <div className="overflow-x-auto overflow-y-auto max-h-[600px]">
         <table className="w-full table-fixed">
-          <thead className="sticky top-0 bg-white z-10">
-            <tr className="text-left text-xs text-neutral-500 border-b border-neutral-200">
-              <th className="pb-1.5 font-medium w-28">Date</th>
-              <th className="pb-1.5 font-medium w-40">Location</th>
-              <th className="pb-1.5 font-medium w-auto">Message</th>
-              <th className="pb-1.5 text-right font-medium w-24 pr-4">Players</th>
-              <th className="pb-1.5 font-medium w-40 pl-4">Winner</th>
-              <th className="pb-1.5 font-medium w-24 pl-4">Scores</th>
+          <thead className="sticky top-0 bg-white z-10 shadow-[0_1px_0_0_rgba(0,0,0,0.04)]">
+            <tr className="text-left text-xs text-neutral-500 border-b border-neutral-100">
+              <th className="pb-1 font-medium w-24">Date</th>
+              <th className="pb-1 font-medium w-36">Location</th>
+              <th className="pb-1 font-medium w-auto">Message</th>
+              <th className="pb-1 text-right font-medium w-20 pr-4">Players</th>
+              <th className="pb-1 font-medium w-32 pl-4">Winner</th>
+              <th className="pb-1 font-medium w-20 pl-4">Scores</th>
             </tr>
           </thead>
+
           <tbody>
             {games.map((game) => {
               const isExpanded = expandedGameId === game.gameId
@@ -66,28 +67,32 @@ export default function GameLog() {
               return (
                 <Fragment key={game.gameId}>
                   <tr className="text-sm border-b border-neutral-100">
-                    <td className="py-1.5">{formatDate(game.gameDate)}</td>
-                    <td className="py-1.5">{game.gameLocation}</td>
-                    <td className="py-1.5">{game.gameMessage || '-'}</td>
-                    <td className="py-1.5 text-right text-neutral-600 pr-4">{game.playerCount}</td>
-                    <td className="py-1.5 pl-4">
+                    <td className="py-1">{formatDate(game.gameDate)}</td>
+                    <td className="py-1">{game.gameLocation}</td>
+                    <td className="py-1">{game.gameMessage || '-'}</td>
+                    <td className="py-1 text-right text-neutral-700 pr-4">{game.playerCount}</td>
+                    <td className="py-1 pl-4">
                       {game.winnerName ? (
-                        <span>{game.winnerName} <span className="text-neutral-500 text-xs">{game.winnerScore}</span></span>
+                        <span>
+                          {game.winnerName}{' '}
+                          <span className="text-neutral-500 text-xs">{game.winnerScore}</span>
+                        </span>
                       ) : (
                         <span className="text-neutral-400">-</span>
                       )}
                     </td>
-                    <td className="py-1.5 pl-4">
+                    <td className="py-1 pl-4">
                       <button
                         onClick={() => handleToggleDetails(game.gameId)}
-                        className="text-xs text-neutral-600 hover:text-neutral-900 underline"
+                        className="text-xs text-neutral-600 hover:text-neutral-900 underline cursor-pointer"
                       >
                         {isExpanded ? 'Hide' : 'Show'}
                       </button>
                     </td>
                   </tr>
+
                   {isExpanded && (
-                    <tr key={`${game.gameId}-details`}>
+                    <tr>
                       <td colSpan={6} className="py-3 px-4 bg-neutral-50">
                         <div className="space-y-3">
                           <div>
@@ -107,12 +112,14 @@ export default function GameLog() {
                               )}
                             </div>
                           </div>
+
                           {game.gameImageUrl && (
                             <div>
                               <h3 className="text-xs font-medium text-neutral-900 mb-1">Game Image</h3>
                               <span className="text-xs text-neutral-500">{game.gameImageUrl}</span>
                             </div>
                           )}
+
                           {game.scoreImageUrl && (
                             <div>
                               <h3 className="text-xs font-medium text-neutral-900 mb-1">Score Sheet</h3>
@@ -129,19 +136,20 @@ export default function GameLog() {
           </tbody>
         </table>
       </div>
+
       <div className="flex items-center justify-between mt-4">
         <button
           onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
           disabled={currentPage === 1}
-          className="text-sm text-neutral-600 hover:text-neutral-900 disabled:text-neutral-400 disabled:cursor-not-allowed"
+          className="text-xs text-neutral-600 hover:text-neutral-900 disabled:text-neutral-400 disabled:cursor-not-allowed cursor-pointer"
         >
           Previous
         </button>
-        <span className="text-sm text-neutral-600">Page {currentPage}</span>
+        <span className="text-xs text-neutral-600">Page {currentPage}</span>
         <button
           onClick={() => setCurrentPage(prev => prev + 1)}
           disabled={games.length < pageSize}
-          className="text-sm text-neutral-600 hover:text-neutral-900 disabled:text-neutral-400 disabled:cursor-not-allowed"
+          className="text-xs text-neutral-600 hover:text-neutral-900 disabled:text-neutral-400 disabled:cursor-not-allowed cursor-pointer"
         >
           Next
         </button>

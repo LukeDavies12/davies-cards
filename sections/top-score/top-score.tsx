@@ -89,25 +89,28 @@ export default function TopScore() {
 
   return (
     <div className="mt-12 overflow-y-auto max-h-[600px]">
-      <h1 className="text-base font-bold mb-4">Top Score by # of Players</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <h1 className="text-base font-bold mb-3">Top Score by # of Players</h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {groupedScores.map((group) => (
-          <div key={group.playerCount}>
-            <h2 className="font-medium text-neutral-900 mb-1">
+          <div key={group.playerCount} className="pb-3 border-b border-neutral-200/60 last:border-none">
+            <h2 className="font-medium text-neutral-900 mb-1.5">
               {group.playerCount} {group.playerCount === 1 ? "Player" : "Players"}
             </h2>
-            <div className="space-y-1">
+
+            <div className="space-y-0.5">
               {group.scores.map((scoreItem, index) => (
                 <div key={index} className="flex items-start justify-between gap-2 text-sm">
-                  <div className="flex-1 min-w-0">
-                    <div className="text-neutral-900 truncate">
+                  <div className="flex-1 min-w-0 max-w-full">
+                    <div className="text-neutral-800 truncate">
                       {scoreItem.players.join(" / ")}
                     </div>
-                    <div className="text-neutral-900 text-xs truncate">
+                    <div className="text-xs text-neutral-600 truncate">
                       {formatDate(scoreItem.gameDate)} <span className="text-neutral-500">{scoreItem.gameLocation}</span>
                     </div>
                   </div>
-                  <div className="text-neutral-700 whitespace-nowrap">
+
+                  <div className="text-neutral-700 whitespace-nowrap text-right font-semibold min-w-[24px]">
                     {scoreItem.score}
                   </div>
                 </div>

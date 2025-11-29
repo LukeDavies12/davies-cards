@@ -148,7 +148,7 @@ export default function Leaderboard() {
             type="number"
             value={inputValue}
             onChange={(e) => handleInputChange(e.target.value)}
-            className="w-16 px-2 py-1 text-sm border-b border-neutral-300 focus:outline-none focus:border-neutral-900"
+            className="w-16 px-2 py-1 text-sm bg-neutral-100 rounded-xs hover:bg-neutral-200 focus:bg-neutral-300 focus:outline-none transition-colors ease-linear duration-100"
             min="0"
           />
         </div>
@@ -167,7 +167,7 @@ export default function Leaderboard() {
                   </div>
                   <div className="w-full bg-neutral-100 h-2">
                     <div
-                      className="bg-red-600 h-2"
+                      className="bg-red-600 h-2 rounded-xs"
                       style={{ width: `${(item.value / maxWinPercentage) * 100}%` }}
                     />
                   </div>
@@ -189,7 +189,7 @@ export default function Leaderboard() {
                   </div>
                   <div className="w-full bg-neutral-100 h-2">
                     <div
-                      className="bg-neutral-600 h-2"
+                      className="bg-neutral-600 h-2 rounded-xs"
                       style={{ width: `${((maxAvgPoints - item.value) / avgPointsRange) * 100}%` }}
                     />
                   </div>
@@ -199,35 +199,37 @@ export default function Leaderboard() {
           </div>
         </div>
       </div>
+
       <div className="overflow-x-auto overflow-y-auto max-h-[280px]">
         <table className="w-full table-fixed">
-          <thead className="sticky top-0 bg-white z-10">
+          <thead className="sticky top-0 bg-white z-10 shadow-[0_1px_0_0_rgba(0,0,0,0.04)]">
             <tr className="text-left text-xs text-neutral-500 border-b border-neutral-200">
-              <th className="pb-1.5 font-medium w-auto">
+              <th className="pb-1 font-medium w-auto">
                 <SortButton column="playerName" label="Player" />
               </th>
-              <th className="pb-1.5 text-right font-medium w-24">
+              <th className="pb-1 text-right font-medium w-20">
                 <SortButton column="gamesPlayed" label="Games" align="right" />
               </th>
-              <th className="pb-1.5 text-right font-medium w-20">
+              <th className="pb-1 text-right font-medium w-16">
                 <SortButton column="wins" label="Wins" align="right" />
               </th>
-              <th className="pb-1.5 text-right font-medium w-24">
+              <th className="pb-1 text-right font-medium w-20">
                 <SortButton column="winPercentage" label="Win %" align="right" />
               </th>
-              <th className="pb-1.5 text-right font-medium w-40">
+              <th className="pb-1 text-right font-medium w-32">
                 <SortButton column="avgPointsFromWin" label="Avg Pts from Win" align="right" />
               </th>
             </tr>
           </thead>
+
           <tbody>
             {sortedData.map((player) => (
               <tr key={player.playerId} className="text-sm border-b border-neutral-100">
-                <td className="py-1.5">{player.playerName}</td>
-                <td className="py-1.5 text-right text-neutral-600">{player.gamesPlayed}</td>
-                <td className="py-1.5 text-right text-neutral-600">{player.wins}</td>
-                <td className="py-1.5 text-right text-neutral-600">{player.winPercentage}%</td>
-                <td className="py-1.5 text-right text-neutral-600">{player.avgPointsFromWin}</td>
+                <td className="py-1">{player.playerName}</td>
+                <td className="py-1 text-right text-neutral-700">{player.gamesPlayed}</td>
+                <td className="py-1 text-right text-neutral-700">{player.wins}</td>
+                <td className="py-1 text-right text-neutral-700">{player.winPercentage}%</td>
+                <td className="py-1 text-right text-neutral-700">{player.avgPointsFromWin}</td>
               </tr>
             ))}
           </tbody>
