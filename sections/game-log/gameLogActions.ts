@@ -1,6 +1,7 @@
 'use server';
 
 import { sql, toCamel } from '@/data/db';
+import { revalidatePath } from 'next/cache';
 import { cache } from 'react';
 
 export interface GameDetailsDTO {
@@ -109,6 +110,7 @@ export async function logGame(input: LogGameInput) {
       `;
     }
 
+    revalidatePath('/');
     return { success: true, gameId };
   } catch (error) {
     console.error('Error logging game:', error);
