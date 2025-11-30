@@ -104,10 +104,10 @@ export default function TopScore() {
   })
 
   return (
-    <div className="mt-12 overflow-y-auto max-h-[600px]">
+    <div className="mt-12">
       <h1 className="text-base font-bold mb-3">Top Score by # of Players</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto max-h-[600px]">
         {groupedScores.map((group) => (
           <div key={group.playerCount} className="pb-3 border-b border-neutral-200/60 last:border-none">
             <h2 className="font-medium text-neutral-900 mb-1.5">
@@ -121,7 +121,7 @@ export default function TopScore() {
                     <div className="text-neutral-800 truncate">
                       {scoreItem.players.join(" / ")}
                     </div>
-                    <div className="text-xs text-neutral-600 truncate">
+                    <div className="text-xs text-neutral-500 truncate">
                       {formatDate(scoreItem.gameDate)} <span className="text-neutral-500">{scoreItem.gameLocation}</span>
                     </div>
                   </div>

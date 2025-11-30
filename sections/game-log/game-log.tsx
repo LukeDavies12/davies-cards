@@ -96,9 +96,9 @@ export default function GameLog({ isSignedIn = false }: GameLogProps) {
   }
 
   return (
-    <div className="mt-12">
+    <div className="mt-12 pb-12">
       <h1 className="text-base font-bold mb-4">Game Log</h1>
-      <div className="overflow-x-auto overflow-y-auto max-h-[600px]">
+      <div className="overflow-x-auto overflow-y-auto max-h-[600px] hidden sm:block">
         <table className="w-full table-fixed">
           <thead className="sticky top-0 bg-white z-10 shadow-[0_1px_0_0_rgba(0,0,0,0.04)]">
             <tr className="text-left text-xs text-neutral-500 border-b border-neutral-100">
@@ -210,6 +210,109 @@ export default function GameLog({ isSignedIn = false }: GameLogProps) {
             })}
           </tbody>
         </table>
+      </div>
+
+      <div className="sm:hidden space-y-3 overflow-y-auto max-h-[600px]">
+        {games.map((game) => {
+          const isExpanded = expandedGameId === game.gameId
+          const scores = playerScores[game.gameId] || []
+          const isLoading = loadingScores === game.gameId
+
+          return (
+            <div
+              key={game.gameId}
+              className="border border-neutral-200 rounded-md p-3 bg-white"
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs font-medium text-neutral-900">
+                  {formatDate(game.gameDate)}
+                </span>
+
+                {isSignedIn && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditingGameId(game.gameId)}
+                      className="text-neutral-500 hover:text-neutral-700"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteGame(game.gameId)}
+                      disabled={deletingGameId === game.gameId}
+                      className="text-neutral-500 hover:text-red-700 disabled:text-neutral-300"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="text-xs text-neutral-700 mb-0.5 truncate">
+                {game.gameLocation}
+              </div>
+
+              <div className="text-xs text-neutral-600 mb-1 truncate">
+                {game.gameMessage || '-'}
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-neutral-700 mb-2">
+                <span>{game.playerCount} players</span>
+                <span>
+                  Winner: {game.winnerName ? (
+                    <>
+                      {game.winnerName}{' '}
+                      <span className="text-neutral-500">{game.winnerScore}</span>
+                    </>
+                  ) : (
+                    <span className="text-neutral-400">-</span>
+                  )}
+                </span>
+              </div>
+
+              <button
+                onClick={() => handleToggleDetails(game.gameId)}
+                className="text-xs text-neutral-600 hover:text-neutral-900 underline"
+              >
+                {isExpanded ? "Hide" : "Show Scores"}
+              </button>
+
+              {isExpanded && (
+                <div className="mt-2 border-t border-neutral-200 pt-2">
+                  <h3 className="text-xs font-medium text-neutral-900 mb-1">Player Scores</h3>
+
+                  {isLoading ? (
+                    <div className="text-xs text-neutral-500">Loading...</div>
+                  ) : scores.length > 0 ? (
+                    <div className="space-y-1">
+                      {scores.map((player) => (
+                        <div key={player.playerId} className="flex justify-between text-xs">
+                          <span className="text-neutral-700">{player.playerName}</span>
+                          <span className="text-neutral-900 font-medium">{player.score}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-xs text-neutral-500">No scores available</div>
+                  )}
+
+                  {game.gameImageUrl && (
+                    <div className="mt-3">
+                      <h3 className="text-xs font-medium text-neutral-900 mb-1">Game Image</h3>
+                      <span className="text-xs text-neutral-500 break-all">{game.gameImageUrl}</span>
+                    </div>
+                  )}
+
+                  {game.scoreImageUrl && (
+                    <div className="mt-3">
+                      <h3 className="text-xs font-medium text-neutral-900 mb-1">Score Sheet</h3>
+                      <span className="text-xs text-neutral-500 break-all">{game.scoreImageUrl}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
 
       <div className="flex items-center justify-between mt-4">

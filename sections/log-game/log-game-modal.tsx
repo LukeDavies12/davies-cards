@@ -107,6 +107,12 @@ export default function LogGameModal({ isOpen, onClose, gameId }: LogGameModalPr
   const [showPlayerList, setShowPlayerList] = useState(false);
   const [playersLoaded, setPlayersLoaded] = useState(false);
   const [loadingGameData, setLoadingGameData] = useState(false);
+  const [originalGameData, setOriginalGameData] = useState<{
+    date: string;
+    location: string;
+    message: string;
+    playerScores: Array<{ playerId: number; score: number }>;
+  } | null>(null);
 
   const locationRef = useRef<HTMLDivElement>(null);
   const playerListRef = useRef<HTMLDivElement>(null);
@@ -151,6 +157,17 @@ export default function LogGameModal({ isOpen, onClose, gameId }: LogGameModalPr
         setLocation(gameData.location);
         setLocationSearch(gameData.location);
         setMessage(gameData.message || '');
+
+        // Store original data for comparison
+        setOriginalGameData({
+          date: gameData.date,
+          location: gameData.location,
+          message: gameData.message || '',
+          playerScores: gameData.playerScores.map(ps => ({
+            playerId: ps.playerId,
+            score: ps.score
+          }))
+        });
 
         // Format player scores for the textarea
         const scoresTextValue = gameData.playerScores
@@ -275,7 +292,74 @@ export default function LogGameModal({ isOpen, onClose, gameId }: LogGameModalPr
   const showCreateNew = locationSearch && !exactMatch && locationSearch.trim().length > 0;
 
   const allPlayersMatched = parsedScores.length > 0 && parsedScores.every(p => p.matchedPlayer);
-  const canSubmit = date && location && parsedScores.length > 1 && allPlayersMatched && !loading;
+
+  // Check if anything has changed when editing
+  const hasChanges = gameId ? (() => {
+    // If original data isn't loaded yet, return false (button will be disabled by loadingGameData anyway)
+    if (!originalGameData) return false;
+
+    // Check if date changed (normalize date format)
+    const normalizedDate = date ? date.trim() : '';
+    const normalizedOriginalDate = originalGameData.date ? originalGameData.date.trim() : '';
+    if (normalizedDate !== normalizedOriginalDate) {
+      return true;
+    }
+
+    // Check if location changed (case-insensitive comparison)
+    const normalizedLocation = location ? location.trim() : '';
+    const normalizedOriginalLocation = originalGameData.location ? originalGameData.location.trim() : '';
+    if (normalizedLocation.toLowerCase() !== normalizedOriginalLocation.toLowerCase()) {
+      return true;
+    }
+
+    // Check if message changed (normalize empty strings)
+    const currentMessage = (message || '').trim();
+    const originalMessage = (originalGameData.message || '').trim();
+    if (currentMessage !== originalMessage) {
+      return true;
+    }
+
+    // Check if player scores changed
+    // Only check if we have parsed scores with matched players
+    if (parsedScores.length > 0 && allPlayersMatched) {
+      const currentPlayerScores = parsedScores
+        .filter(p => p.matchedPlayer)
+        .map(p => ({
+          playerId: p.matchedPlayer!.id,
+          score: p.score
+        }))
+        .sort((a, b) => {
+          // Sort by playerId first, then by score
+          if (a.playerId !== b.playerId) return a.playerId - b.playerId;
+          return a.score - b.score;
+        });
+
+      const originalPlayerScores = [...originalGameData.playerScores]
+        .sort((a, b) => {
+          if (a.playerId !== b.playerId) return a.playerId - b.playerId;
+          return a.score - b.score;
+        });
+
+      if (currentPlayerScores.length !== originalPlayerScores.length) {
+        return true;
+      }
+
+      for (let i = 0; i < currentPlayerScores.length; i++) {
+        if (currentPlayerScores[i].playerId !== originalPlayerScores[i].playerId ||
+          currentPlayerScores[i].score !== originalPlayerScores[i].score) {
+          return true;
+        }
+      }
+    } else if (originalGameData.playerScores.length > 0) {
+      // If we have original scores but current parsed scores aren't ready/matched yet
+      // Consider it unchanged (will be false, blocking submission until scores are parsed)
+      return false;
+    }
+
+    return false;
+  })() : true;
+
+  const canSubmit = date && location && parsedScores.length > 1 && allPlayersMatched && !loading && hasChanges;
 
   async function handleCreatePlayer(playerName: string) {
     const result = await createPlayer(playerName);
@@ -386,10 +470,19 @@ export default function LogGameModal({ isOpen, onClose, gameId }: LogGameModalPr
         <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
           <div className="p-5">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold">{gameId ? 'Edit Game' : 'Log Game'}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-bold">{gameId ? 'Edit Game' : 'Log Game'}</h2>
+                {(loadingGameData || submitting) && (
+                  <div className="flex items-center gap-2 text-sm text-neutral-500">
+                    <div className="w-4 h-4 border-2 border-neutral-300 border-t-red-700 rounded-full animate-spin"></div>
+                    <span>{loadingGameData ? 'Loading...' : submitting ? (gameId ? 'Updating...' : 'Logging...') : ''}</span>
+                  </div>
+                )}
+              </div>
               <button
                 onClick={onClose}
-                className="text-neutral-500 hover:text-neutral-700 cursor-pointer"
+                className="text-neutral-500 hover:text-neutral-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={submitting || loadingGameData}
               >
                 <X size={20} />
               </button>
@@ -572,15 +665,19 @@ export default function LogGameModal({ isOpen, onClose, gameId }: LogGameModalPr
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-7 py-1.5 rounded-md bg-neutral-200 text-neutral-700 hover:bg-neutral-300 active:bg-neutral-400 active:text-neutral-800 transition-colors cursor-pointer ease-linear duration-100"
+                  className="px-7 py-1.5 rounded-md bg-neutral-200 text-neutral-700 hover:bg-neutral-300 active:bg-neutral-400 active:text-neutral-800 transition-colors cursor-pointer ease-linear duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={submitting || loadingGameData}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={!canSubmit || submitting}
-                  className="px-7 py-1.5 bg-red-700 text-white rounded-md hover:bg-red-800 active:bg-red-900 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors cursor-pointer ease-linear duration-100"
+                  disabled={!canSubmit || submitting || loadingGameData}
+                  className="px-7 py-1.5 bg-red-700 text-white rounded-md hover:bg-red-800 active:bg-red-900 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors cursor-pointer ease-linear duration-100 flex items-center gap-2"
                 >
+                  {submitting && (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  )}
                   {submitting ? (gameId ? 'Updating...' : 'Logging...') : (gameId ? 'Update Game' : 'Log Game')}
                 </button>
               </div>

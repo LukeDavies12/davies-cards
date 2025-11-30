@@ -157,7 +157,7 @@ export default function Leaderboard() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 mt-8">
         <h1 className="text-base font-bold">O-hell Leaderboard</h1>
         <div className="flex items-center gap-2">
           <label className="text-sm text-neutral-600">Min Games</label>
