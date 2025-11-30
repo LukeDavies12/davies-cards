@@ -50,13 +50,13 @@ export default function NavClient({ userName }: NavClientProps) {
     <nav className="flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3">
       <Link href="/" className="flex items-center">
         <Image src="/davies-cards.svg" height={40} width={40} alt="Logo" className="w-10 sm:w-12" />
-        <span className="text-red-700 font-bold ml-1 text-sm sm:text-base">Davies Cards</span>
+        <span className="text-red-700 font-bold ml-1 text-sm">Davies Cards</span>
       </Link>
 
       {!isLoginPage && (
         <Link
           href="/login"
-          className="bg-neutral-100 rounded-lg text-neutral-700 px-4 sm:px-7 py-1.5 text-sm sm:text-base hover:bg-neutral-200 active:bg-neutral-300 active:text-neutral-800 transition-colors duration-100 ease-linear"
+          className="bg-neutral-100 rounded-lg text-neutral-700 px-4 sm:px-7 py-1.5 text-sm: hover:bg-neutral-200 active:bg-neutral-300 active:text-neutral-800 transition-colors duration-100 ease-linear"
         >
           <span className="hidden sm:inline">Sign in to log game</span>
           <span className="sm:hidden">Sign in</span>

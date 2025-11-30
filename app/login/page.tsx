@@ -10,7 +10,7 @@ import { useState } from 'react';
 export default function LoginPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const [email, setEmail] = useState('daviesfamcards@google.com');
+  const [email, setEmail] = useState('daviesfamcards@gmail.com');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);

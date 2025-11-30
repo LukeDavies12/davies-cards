@@ -229,19 +229,21 @@ export default function GameLog({ isSignedIn = false }: GameLogProps) {
                 </span>
 
                 {isSignedIn && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <button
                       onClick={() => setEditingGameId(game.gameId)}
-                      className="text-neutral-500 hover:text-neutral-700"
+                      className="text-neutral-600 hover:text-neutral-900 active:text-neutral-700 transition-colors p-1.5 rounded-md hover:bg-neutral-100 active:bg-neutral-200"
+                      title="Edit game"
                     >
-                      <Pencil size={14} />
+                      <Pencil size={16} />
                     </button>
                     <button
                       onClick={() => handleDeleteGame(game.gameId)}
                       disabled={deletingGameId === game.gameId}
-                      className="text-neutral-500 hover:text-red-700 disabled:text-neutral-300"
+                      className="text-neutral-600 hover:text-red-700 active:text-red-800 disabled:text-neutral-300 disabled:cursor-not-allowed transition-colors p-1.5 rounded-md hover:bg-red-50 active:bg-red-100"
+                      title="Delete game"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 )}
