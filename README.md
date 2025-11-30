@@ -9,9 +9,15 @@ Live Site: https://daviesoh.vercel.app
 ### UI / SQL
 
 ![Log game screen](./readme-images/LogGame.png)
+
 ![Leaderboard](./readme-images/MobileLeaderboard.png)
+
 ![Mobile Cards](./readme-images/MobileCards.png)
+
 ![Edit Game](./readme-images/EditGame.png)
+
 ![Top Scores](./readme-images/TopScoresSection.png)
+
 ![Leaderboard Desktop](./readme-images/DesktopLeaderboard.png)
+
 ![SQL Procedure](./readme-images/SQLProcedure.png)
