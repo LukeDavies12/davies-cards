@@ -8,10 +8,10 @@ Live Site:
 
 ### UI / SQL
 
-![Log game screen]('../../readme-images/Log%20Game.png')
-![Leaderboard]('../../readme-images/Mobile%20Leaderboard.png')
-![Mobile Cards]('../../readme-images/Mobile%20Cards.png')
-![Edit Game]('../../readme-images/Edit%20Game.png')
-![Top Scores]('../../readme-images/Top%20Scores%20Section.png')
-![Leaderboard Desktop]('../../readme-images/Desktop%20Leaderboard.png')
-![SQL Procedure]('../../readme-images/SQL%20Procedure.png')
+![Log game screen](../../readme-images/Log%20Game.png)
+![Leaderboard](../../readme-images/Mobile%20Leaderboard.png)
+![Mobile Cards](../../readme-images/Mobile%20Cards.png)
+![Edit Game](../../readme-images/Edit%20Game.png)
+![Top Scores](../../readme-images/Top%20Scores%20Section.png)
+![Leaderboard Desktop](../../readme-images/Desktop%20Leaderboard.png)
+![SQL Procedure](../../readme-images/SQL%20Procedure.png)
