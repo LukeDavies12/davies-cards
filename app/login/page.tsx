@@ -46,7 +46,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="daviesfamcards@google.com"
+              placeholder="daviesfamcards@gmail.com"
             />
 
             <BaseInput
