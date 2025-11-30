@@ -474,10 +474,10 @@ export default function LogGameModal({ isOpen, onClose, gameId }: LogGameModalPr
                       type="button"
                       onClick={() => setShowPlayerList(!showPlayerList)}
                       className="text-neutral-500 hover:text-neutral-700 transition-colors flex items-center gap-1"
-                      title="View player names on site"
+                      title="View player names"
                     >
                       <Info size={16} />
-                      <span className="text-xs">(view player names on site)</span>
+                      <span className="text-xs">(view player names)</span>
                     </button>
                     {showPlayerList && (
                       <>
