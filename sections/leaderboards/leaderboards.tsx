@@ -38,6 +38,15 @@ export default function Leaderboard() {
     setIsInitialized(true)
   }, [])
 
+  const refreshLeaderboard = () => {
+    if (isInitialized && minGames !== null && minGames >= 0) {
+      const queryParams = { minGamesPlayed: minGames }
+      lastQueryParams.current = queryParams
+      localStorage.setItem("minGamesPlayed", minGames.toString())
+      getWinStatsData(queryParams).then(setData)
+    }
+  }
+
   useEffect(() => {
     if (isInitialized && minGames !== null && minGames >= 0) {
       const queryParams = { minGamesPlayed: minGames }
@@ -52,6 +61,14 @@ export default function Leaderboard() {
         getWinStatsData(queryParams).then(setData)
       }
     }
+  }, [minGames, isInitialized])
+
+  useEffect(() => {
+    const handleGameLogged = () => {
+      refreshLeaderboard()
+    }
+    window.addEventListener('gameLogged', handleGameLogged)
+    return () => window.removeEventListener('gameLogged', handleGameLogged)
   }, [minGames, isInitialized])
 
   const handleInputChange = (value: string) => {

@@ -295,6 +295,8 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
         setParsedScores([]);
         onClose();
         router.refresh();
+        // Dispatch custom event to notify other components to refresh
+        window.dispatchEvent(new CustomEvent('gameLogged'));
       } else {
         setError(result.error || 'Failed to log game');
       }

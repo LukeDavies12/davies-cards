@@ -15,6 +15,14 @@ export default function GameLog() {
     getGamesWithDetails(currentPage, pageSize).then(setGames)
   }, [currentPage])
 
+  useEffect(() => {
+    const handleGameLogged = () => {
+      getGamesWithDetails(currentPage, pageSize).then(setGames)
+    }
+    window.addEventListener('gameLogged', handleGameLogged)
+    return () => window.removeEventListener('gameLogged', handleGameLogged)
+  }, [currentPage])
+
   const handleToggleDetails = async (gameId: number) => {
     if (expandedGameId === gameId) {
       setExpandedGameId(null)

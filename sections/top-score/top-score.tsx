@@ -16,10 +16,22 @@ type GroupedScores = {
 export default function TopScore() {
   const [data, setData] = useState<TopScoreByPlayerCountDTO[]>([])
 
-  useEffect(() => {
+  const refreshTopScores = () => {
     getTopScoresByPlayerCount().then((result) => {
       setData(result)
     })
+  }
+
+  useEffect(() => {
+    refreshTopScores()
+  }, [])
+
+  useEffect(() => {
+    const handleGameLogged = () => {
+      refreshTopScores()
+    }
+    window.addEventListener('gameLogged', handleGameLogged)
+    return () => window.removeEventListener('gameLogged', handleGameLogged)
   }, [])
 
   const formatDate = (dateStr: string): string => {
