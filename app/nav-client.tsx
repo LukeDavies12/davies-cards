@@ -27,7 +27,7 @@ export default function NavClient({ userName }: NavClientProps) {
           <div className="flex items-center gap-8">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="bg-red-700 text-white px-4 py-1.5 rounded-md hover:bg-red-800 active:bg-red-900 transition-colors cursor-pointer"
+              className="bg-red-700 text-white px-7 py-1.5 rounded-md hover:bg-red-800 active:bg-red-900 transition-colors cursor-pointer"
             >
               Log Game
             </button>
@@ -56,7 +56,7 @@ export default function NavClient({ userName }: NavClientProps) {
       {!isLoginPage && (
         <Link
           href="/login"
-          className="bg-neutral-100 rounded-lg text-neutral-700 px-5 py-1.5 hover:bg-neutral-200 active:bg-neutral-300 active:text-neutral-800 transition-colors duration-100 ease-linear"
+          className="bg-neutral-100 rounded-lg text-neutral-700 px-7 py-1.5 hover:bg-neutral-200 active:bg-neutral-300 active:text-neutral-800 transition-colors duration-100 ease-linear"
         >
           Sign in to log game
         </Link>

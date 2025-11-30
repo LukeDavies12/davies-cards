@@ -219,7 +219,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
   const showCreateNew = locationSearch && !exactMatch && locationSearch.trim().length > 0;
 
   const allPlayersMatched = parsedScores.length > 0 && parsedScores.every(p => p.matchedPlayer);
-  const canSubmit = date && location && parsedScores.length > 0 && allPlayersMatched && !loading;
+  const canSubmit = date && location && parsedScores.length > 1 && allPlayersMatched && !loading;
 
   async function handleCreatePlayer(playerName: string) {
     const result = await createPlayer(playerName);
@@ -462,8 +462,8 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
               </div>
 
               {parsedScores.length > 0 && (
-                <div className="border border-neutral-200 rounded-md p-4 bg-neutral-50">
-                  <h3 className="text-sm font-medium text-neutral-700 mb-2">Parsed Scores:</h3>
+                <div className="rounded-md p-4 bg-neutral-100">
+                  <h3 className="text-sm font-medium text-neutral-800 mb-2">Parsed Scores</h3>
                   <div className="space-y-2">
                     {parsedScores.map((parsed, index) => (
                       <div key={index} className="flex items-center justify-between text-sm">
@@ -501,14 +501,14 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 border border-neutral-300 rounded-md text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer"
+                  className="px-7 py-1.5 rounded-md bg-neutral-200 text-neutral-700 hover:bg-neutral-300 active:bg-neutral-400 active:text-neutral-800 transition-colors cursor-pointer ease-linear duration-100"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!canSubmit || submitting}
-                  className="px-4 py-2 bg-red-700 text-white rounded-md hover:bg-red-800 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  className="px-7 py-1.5 bg-red-700 text-white rounded-md hover:bg-red-800 active:bg-red-900 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors cursor-pointer ease-linear duration-100"
                 >
                   {submitting ? 'Logging...' : 'Log Game'}
                 </button>
