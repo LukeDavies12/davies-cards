@@ -36,11 +36,15 @@ export default function TopScore() {
 
   const formatDate = (dateStr: string): string => {
     try {
-      const date = new Date(dateStr)
+      // Force local date parsing
+      const [y, m, d] = dateStr.split('-').map(Number)
+      const date = new Date(y, m - 1, d)
+
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
       const month = months[date.getMonth()]
       const day = date.getDate()
-      const year = date.getFullYear().toString().slice(-2)
+      const year = String(date.getFullYear()).slice(-2)
+
       return `${month} ${day} '${year}`
     } catch {
       return dateStr

@@ -1,14 +1,22 @@
 "use client"
 
+import LogGameModal from "@/sections/log-game/log-game-modal"
+import { Pencil, Trash2 } from "lucide-react"
 import { Fragment, useEffect, useState } from "react"
-import { getGamePlayerScores, getGamesWithDetails, type GameDetailsDTO, type GamePlayerScoreDTO } from "./gameLogActions"
+import { deleteGame, getGamePlayerScores, getGamesWithDetails, type GameDetailsDTO, type GamePlayerScoreDTO } from "./gameLogActions"
 
-export default function GameLog() {
+interface GameLogProps {
+  isSignedIn?: boolean
+}
+
+export default function GameLog({ isSignedIn = false }: GameLogProps) {
   const [games, setGames] = useState<GameDetailsDTO[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [expandedGameId, setExpandedGameId] = useState<number | null>(null)
   const [playerScores, setPlayerScores] = useState<Record<number, GamePlayerScoreDTO[]>>({})
   const [loadingScores, setLoadingScores] = useState<number | null>(null)
+  const [deletingGameId, setDeletingGameId] = useState<number | null>(null)
+  const [editingGameId, setEditingGameId] = useState<number | null>(null)
   const pageSize = 10
 
   useEffect(() => {
@@ -37,13 +45,50 @@ export default function GameLog() {
     }
   }
 
+  const handleDeleteGame = async (gameId: number) => {
+    if (!confirm('Are you sure you want to delete this game? This action cannot be undone.')) {
+      return
+    }
+
+    setDeletingGameId(gameId)
+    try {
+      const result = await deleteGame(gameId)
+      if (result.success) {
+        // Remove the game from the list
+        setGames(prev => prev.filter(game => game.gameId !== gameId))
+        // Remove player scores for this game
+        setPlayerScores(prev => {
+          const newScores = { ...prev }
+          delete newScores[gameId]
+          return newScores
+        })
+        // If the deleted game was expanded, close it
+        if (expandedGameId === gameId) {
+          setExpandedGameId(null)
+        }
+        // Dispatch event to notify other components
+        window.dispatchEvent(new CustomEvent('gameLogged'))
+      } else {
+        alert(result.error || 'Failed to delete game')
+      }
+    } catch (error) {
+      alert('Failed to delete game')
+    } finally {
+      setDeletingGameId(null)
+    }
+  }
+
   const formatDate = (dateStr: string): string => {
     try {
-      const date = new Date(dateStr)
+      // Force local date parsing
+      const [y, m, d] = dateStr.split('-').map(Number)
+      const date = new Date(y, m - 1, d)
+
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
       const month = months[date.getMonth()]
       const day = date.getDate()
-      const year = date.getFullYear().toString().slice(-2)
+      const year = String(date.getFullYear()).slice(-2)
+
       return `${month} ${day} '${year}`
     } catch {
       return dateStr
@@ -63,6 +108,7 @@ export default function GameLog() {
               <th className="pb-1 text-right font-medium w-20 pr-4">Players</th>
               <th className="pb-1 font-medium w-32 pl-4">Winner</th>
               <th className="pb-1 font-medium w-20 pl-4">Scores</th>
+              {isSignedIn && <th className="pb-1 font-medium w-16 pl-4">Actions</th>}
             </tr>
           </thead>
 
@@ -97,11 +143,32 @@ export default function GameLog() {
                         {isExpanded ? 'Hide' : 'Show'}
                       </button>
                     </td>
+                    {isSignedIn && (
+                      <td className="py-1 pl-4">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setEditingGameId(game.gameId)}
+                            className="text-neutral-500 hover:text-neutral-700 transition-colors cursor-pointer"
+                            title="Edit game"
+                          >
+                            <Pencil size={14} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteGame(game.gameId)}
+                            disabled={deletingGameId === game.gameId}
+                            className="text-neutral-500 hover:text-red-700 disabled:text-neutral-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                            title="Delete game"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
 
                   {isExpanded && (
                     <tr>
-                      <td colSpan={6} className="py-3 px-4 bg-neutral-50">
+                      <td colSpan={isSignedIn ? 7 : 6} className="py-3 px-4 bg-neutral-50">
                         <div className="space-y-3">
                           <div>
                             <h3 className="text-xs font-medium text-neutral-900 mb-2">Player Scores</h3>
@@ -162,6 +229,14 @@ export default function GameLog() {
           Next
         </button>
       </div>
+
+      {isSignedIn && (
+        <LogGameModal
+          isOpen={editingGameId !== null}
+          onClose={() => setEditingGameId(null)}
+          gameId={editingGameId || undefined}
+        />
+      )}
     </div>
   )
 }

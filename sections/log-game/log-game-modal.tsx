@@ -2,7 +2,7 @@
 
 import BaseInput from '@/components/base-input';
 import BaseTextarea from '@/components/base-textarea';
-import { createPlayer, getActivePlayers, getLocations, logGame, type PlayerDTO } from '@/sections/game-log/gameLogActions';
+import { createPlayer, getActivePlayers, getGameForEdit, getLocations, logGame, updateGame, type PlayerDTO } from '@/sections/game-log/gameLogActions';
 import { Check, Info, Plus, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -16,6 +16,7 @@ interface ParsedPlayerScore {
 interface LogGameModalProps {
   isOpen: boolean;
   onClose: () => void;
+  gameId?: number; // If provided, we're editing an existing game
 }
 
 interface CreatePlayerModalProps {
@@ -87,7 +88,7 @@ function CreatePlayerModal({ isOpen, playerName, onClose, onCreate }: CreatePlay
   );
 }
 
-export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
+export default function LogGameModal({ isOpen, onClose, gameId }: LogGameModalProps) {
   const router = useRouter();
   const [players, setPlayers] = useState<PlayerDTO[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
@@ -105,13 +106,26 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
   const [createPlayerModal, setCreatePlayerModal] = useState<{ isOpen: boolean; playerName: string }>({ isOpen: false, playerName: '' });
   const [showPlayerList, setShowPlayerList] = useState(false);
   const [playersLoaded, setPlayersLoaded] = useState(false);
+  const [loadingGameData, setLoadingGameData] = useState(false);
 
   const locationRef = useRef<HTMLDivElement>(null);
   const playerListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
-      loadData();
+      if (gameId) {
+        // Load players first, then game data (so scores can be parsed immediately)
+        loadData().then((loadedPlayers) => {
+          // Pass the loaded players to loadGameData to avoid closure issues
+          if (loadedPlayers && loadedPlayers.length > 0) {
+            loadGameData(loadedPlayers);
+          } else {
+            loadGameData();
+          }
+        });
+      } else {
+        loadData();
+      }
     } else {
       // Reset form when closing
       setDate(new Date().toISOString().split('T')[0]);
@@ -124,7 +138,46 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
       setShowPlayerList(false);
       // Don't reset playersLoaded - keep the cache for next time modal opens
     }
-  }, [isOpen]);
+  }, [isOpen, gameId]);
+
+  async function loadGameData(playersList?: PlayerDTO[]) {
+    if (!gameId) return;
+
+    setLoadingGameData(true);
+    try {
+      const gameData = await getGameForEdit(gameId);
+      if (gameData) {
+        setDate(gameData.date);
+        setLocation(gameData.location);
+        setLocationSearch(gameData.location);
+        setMessage(gameData.message || '');
+
+        // Format player scores for the textarea
+        const scoresTextValue = gameData.playerScores
+          .map(ps => `${ps.playerName} ${ps.score}`)
+          .join(' ');
+        setScoresText(scoresTextValue);
+
+        // Parse scores - use provided players list or current players state
+        const playersToUse = playersList || players;
+        if (playersToUse.length > 0) {
+          handleScoresTextChange(scoresTextValue, playersToUse);
+        } else {
+          // Fallback: if players aren't loaded yet, wait a bit and try again
+          setTimeout(() => {
+            const currentPlayers = players.length > 0 ? players : playersList;
+            if (currentPlayers && currentPlayers.length > 0) {
+              handleScoresTextChange(scoresTextValue, currentPlayers);
+            }
+          }, 200);
+        }
+      }
+    } catch (err) {
+      setError('Failed to load game data');
+    } finally {
+      setLoadingGameData(false);
+    }
+  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -140,7 +193,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  async function loadData(reloadPlayers: boolean = false) {
+  async function loadData(reloadPlayers: boolean = false): Promise<PlayerDTO[] | null> {
     setLoading(true);
     try {
       // Only reload players if explicitly requested (e.g., after creating a new player)
@@ -153,13 +206,16 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
         setPlayers(activePlayers);
         setLocations(gameLocations);
         setPlayersLoaded(true);
+        return activePlayers;
       } else {
         // Just reload locations, keep cached players
         const gameLocations = await getLocations();
         setLocations(gameLocations);
+        return players.length > 0 ? players : null;
       }
     } catch (err) {
       setError('Failed to load data');
+      return null;
     } finally {
       setLoading(false);
     }
@@ -275,15 +331,30 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
 
     setSubmitting(true);
     try {
-      const result = await logGame({
-        date,
-        location,
-        message: message || undefined,
-        playerScores: parsedScores.map(p => ({
-          playerId: p.matchedPlayer!.id,
-          score: p.score
-        }))
-      });
+      const playerScoresData = parsedScores.map(p => ({
+        playerId: p.matchedPlayer!.id,
+        score: p.score
+      }));
+
+      let result;
+      if (gameId) {
+        // Update existing game
+        result = await updateGame({
+          gameId,
+          date,
+          location,
+          message: message || undefined,
+          playerScores: playerScoresData
+        });
+      } else {
+        // Create new game
+        result = await logGame({
+          date,
+          location,
+          message: message || undefined,
+          playerScores: playerScoresData
+        });
+      }
 
       if (result.success) {
         // Reset form
@@ -298,10 +369,10 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
         // Dispatch custom event to notify other components to refresh
         window.dispatchEvent(new CustomEvent('gameLogged'));
       } else {
-        setError(result.error || 'Failed to log game');
+        setError(result.error || (gameId ? 'Failed to update game' : 'Failed to log game'));
       }
     } catch (err) {
-      setError('Failed to log game');
+      setError(gameId ? 'Failed to update game' : 'Failed to log game');
     } finally {
       setSubmitting(false);
     }
@@ -315,7 +386,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
         <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
           <div className="p-5">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold">Log Game</h2>
+              <h2 className="text-lg font-bold">{gameId ? 'Edit Game' : 'Log Game'}</h2>
               <button
                 onClick={onClose}
                 className="text-neutral-500 hover:text-neutral-700 cursor-pointer"
@@ -510,7 +581,7 @@ export default function LogGameModal({ isOpen, onClose }: LogGameModalProps) {
                   disabled={!canSubmit || submitting}
                   className="px-7 py-1.5 bg-red-700 text-white rounded-md hover:bg-red-800 active:bg-red-900 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors cursor-pointer ease-linear duration-100"
                 >
-                  {submitting ? 'Logging...' : 'Log Game'}
+                  {submitting ? (gameId ? 'Updating...' : 'Logging...') : (gameId ? 'Update Game' : 'Log Game')}
                 </button>
               </div>
             </form>

@@ -118,3 +118,108 @@ export async function logGame(input: LogGameInput) {
   }
 }
 
+export interface GameForEditDTO {
+  gameId: number;
+  date: string;
+  location: string;
+  message: string | null;
+  playerScores: Array<{ playerId: number; playerName: string; score: number }>;
+}
+
+export async function getGameForEdit(gameId: number): Promise<GameForEditDTO | null> {
+  try {
+    const gameResult = await sql`
+      SELECT id, date, location, message 
+      FROM game 
+      WHERE id = ${gameId}
+    `;
+
+    if (!gameResult || gameResult.length === 0) {
+      return null;
+    }
+
+    const game = gameResult[0];
+    const scoresResult = await sql`
+      SELECT ps.player_id, ps.score, p.name as player_name
+      FROM player_score ps
+      JOIN player p ON ps.player_id = p.id
+      WHERE ps.game_id = ${gameId}
+    `;
+
+    const playerScores = scoresResult.map((row: any) => ({
+      playerId: row.player_id,
+      playerName: row.player_name,
+      score: row.score
+    }));
+
+    return {
+      gameId: game.id,
+      date: game.date instanceof Date ? game.date.toISOString().split('T')[0] : game.date,
+      location: game.location,
+      message: game.message,
+      playerScores
+    };
+  } catch (error) {
+    console.error('Error getting game for edit:', error);
+    return null;
+  }
+}
+
+export interface UpdateGameInput {
+  gameId: number;
+  date: string;
+  location: string;
+  message?: string;
+  playerScores: Array<{ playerId: number; score: number }>;
+}
+
+export async function updateGame(input: UpdateGameInput): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Update the game
+    await sql`
+      UPDATE game 
+      SET date = ${input.date}, location = ${input.location}, message = ${input.message || null}
+      WHERE id = ${input.gameId}
+    `;
+
+    // Delete existing player scores
+    await sql`
+      DELETE FROM player_score WHERE game_id = ${input.gameId}
+    `;
+
+    // Insert new player scores
+    for (const playerScore of input.playerScores) {
+      await sql`
+        INSERT INTO player_score (player_id, game_id, score) 
+        VALUES (${playerScore.playerId}, ${input.gameId}, ${playerScore.score})
+      `;
+    }
+
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating game:', error);
+    return { success: false, error: 'Failed to update game' };
+  }
+}
+
+export async function deleteGame(gameId: number): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Delete player scores first (due to foreign key constraint)
+    await sql`
+      DELETE FROM player_score WHERE game_id = ${gameId}
+    `;
+
+    // Delete the game
+    await sql`
+      DELETE FROM game WHERE id = ${gameId}
+    `;
+
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting game:', error);
+    return { success: false, error: 'Failed to delete game' };
+  }
+}
+
